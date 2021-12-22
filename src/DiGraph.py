@@ -71,8 +71,9 @@ class DiGraph(GraphInterface.GraphInterface):
         each node is represented using a pair (other_node_id, weight)
          """
         in_edges_dict = {}
-        for edge in self.edge_in_map.get(key_transform(int)).get(int).values:
-            in_edges_dict[edge[0]] = edge[1]
+        if id1 in self.edge_in_map.get(key_transform(id1)):
+            for edge in self.edge_in_map.get(key_transform(id1)).get(id1).items():
+                in_edges_dict[edge[0]] = edge[1]
         return in_edges_dict
 
     def all_out_edges_of_node(self, id1: int) -> dict:
@@ -80,8 +81,9 @@ class DiGraph(GraphInterface.GraphInterface):
         (other_node_id, weight)
         """
         out_edges_dict = {}
-        for edge in self.edge_out_map.get(key_transform(int)).get(int).values:
-            out_edges_dict[edge[0]] = edge[1]
+        if id1 in self.edge_out_map.get(key_transform(id1)):
+            for edge in self.edge_out_map.get(key_transform(id1)).get(id1).items():
+                out_edges_dict[edge[0]] = edge[1]
         return out_edges_dict
 
     def get_mc(self) -> int:
@@ -115,7 +117,7 @@ class DiGraph(GraphInterface.GraphInterface):
             self.edge_out_map.get(key_transform(id1))[id1] = {}
         # create new dict if there was not edge in for the relevant node
         if id2 not in self.edge_in_map.get(key_transform(id2)):
-            self.edge_out_map.get(key_transform(id2))[id2] = {}
+            self.edge_in_map.get(key_transform(id2))[id2] = {}
 
         # add correctly
         self.edge_out_map.get(key_transform(id1)).get(id1)[id2] = weight
@@ -152,7 +154,6 @@ class DiGraph(GraphInterface.GraphInterface):
             4 phases:
             1- loop over all the out_edges of the curr nodes and remove them from the in_edges struct
             2- loop over all the in_edges of the curr nodes and remove them from the out_edges struct
-            3- delete dicts of in/out_edges of the curr node
             4- edit inner vars
         """
         if node_id not in self.node_map.get(key_transform(node_id)):
@@ -160,22 +161,17 @@ class DiGraph(GraphInterface.GraphInterface):
             return False
         # phase 1
         i = 0
-        for out_edge_dest in self.edge_out_map.get(key_transform(node_id)).get(node_id).keys():
-            self.remove_edge(out_edge_dest, node_id)
-            i = i+1
+        if self.edge_out_map.get(key_transform(node_id)).get(node_id) is not None:
+            for out_edge_dest in self.edge_out_map.get(key_transform(node_id)).get(node_id).keys():
+                self.remove_edge(node_id, out_edge_dest)
+                i = i+1
         # phase 2
         j = 0
-        for in_edge_src in self.edge_in_map.get(key_transform(node_id)).get(node_id).keys():
-            self.remove_edge(node_id, in_edge_src)
-            j = j+1
+        if self.edge_in_map.get(key_transform(node_id)).get(node_id) is not None:
+            for in_edge_src in self.edge_in_map.get(key_transform(node_id)).get(node_id).keys():
+                self.remove_edge(in_edge_src, node_id)
+                j = j+1
         # phase 3
-        if i > 0:
-            # just if the relevant dict is exist
-            del self.edge_out_map.get(key_transform(node_id))[node_id]
-        if j > 0:
-            # just if the relevant dict is exist
-            del self.edge_in_map.get(key_transform(node_id))[node_id]
-        # phase 4
         self.mc = self.mc + 1
         self.node_size = self.node_size - 1
         return True
@@ -188,18 +184,29 @@ class DiGraph(GraphInterface.GraphInterface):
         @return: True if the edge was removed successfully, False o.w.
         Note: If such an edge does not exists the function will do nothing
         """
-        # if one of the nodes is not exists in the graph, just return false
-        if node_id1 in self.node_map.get(key_transform(node_id1)) or node_id2 in self.node_map.get(
+        # one of the nodes is not exists in the graph, just return false
+        if node_id1 not in self.node_map.get(key_transform(node_id1)) or node_id2 not in self.node_map.get(
                 key_transform(node_id2)):
             return False
+
+        # both of the nodes exists but one of the dont even have edges!
+        if node_id1 not in self.edge_out_map.get(key_transform(node_id1)) or node_id2 not in self.edge_in_map.get(key_transform(node_id2)):
+            return False
+
+        # there is no edge existing between both of the nodes
+        # check only one of the maps is fine since we work symmetry
+        if node_id2 not in self.edge_out_map.get(key_transform(node_id1)).get(node_id1):
+            return False
+
         # otherwise, remove the relevant edge
         # if its the last edge of the currect node, remove also its dict
-        if len(self.edge_out_map.get(key_transform(node_id1)).get(node_id1).items()) == 1:
+        if len(self.edge_out_map.get(key_transform(node_id1)).get(node_id1)) == 1:
             # last edge
             del self.edge_out_map.get(key_transform(node_id1))[node_id1]
         else:
             # is not the last
             del self.edge_out_map.get(key_transform(node_id1)).get(node_id1)[node_id2]
+
         if len(self.edge_in_map.get(key_transform(node_id2)).get(node_id2).items()) == 1:
             # last edge
             del self.edge_in_map.get(key_transform(node_id2))[node_id2]

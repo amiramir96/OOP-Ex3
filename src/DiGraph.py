@@ -9,7 +9,7 @@ def key_transform(node_id: int):
     return node_id % 1000
 
 
-class Dwg(GraphInterface):
+class DiGraph(GraphInterface):
     """
         fields:
         node_map - dict of dicts of nodes (look for logic block to understand mechanic)
@@ -210,3 +210,7 @@ class Dwg(GraphInterface):
         self.mc = self.mc + 1
         self.edge_size = self.edge_size - 1
         return True
+
+
+if __name__ == '__main__':
+    DiGraph()

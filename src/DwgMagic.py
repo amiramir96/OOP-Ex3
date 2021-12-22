@@ -1,5 +1,5 @@
 from typing import List
-from src import GraphAlgoInterface, GraphInterface, Dwg
+from src import GraphAlgoInterface, GraphInterface, DiGraph
 
 
 class DwgMagic(GraphAlgoInterface):

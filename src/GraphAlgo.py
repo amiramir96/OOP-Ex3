@@ -2,7 +2,7 @@ from typing import List
 from src import GraphAlgoInterface, GraphInterface, DiGraph
 
 
-class DwgMagic(GraphAlgoInterface):
+class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
     def get_graph(self) -> GraphInterface:
         """

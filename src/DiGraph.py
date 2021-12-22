@@ -9,7 +9,7 @@ def key_transform(node_id: int):
     return node_id % 1000
 
 
-class DiGraph(GraphInterface):
+class DiGraph(GraphInterface.GraphInterface):
     """
         fields:
         node_map - dict of dicts of nodes (look for logic block to understand mechanic)
@@ -123,7 +123,7 @@ class DiGraph(GraphInterface):
         # edit inner vars
         self.mc = self.mc + 1
         self.edge_size = self.edge_size + 1
-        raise True
+        return True
 
     def add_node(self, node_id: int, pos: tuple = None) -> bool:
         """
@@ -139,7 +139,7 @@ class DiGraph(GraphInterface):
         # edit inner vars
         self.mc = self.mc + 1
         self.node_size = self.node_size + 1
-        raise True
+        return True
 
     def remove_node(self, node_id: int) -> bool:
         """
@@ -212,5 +212,11 @@ class DiGraph(GraphInterface):
         return True
 
 
-if __name__ == '__main__':
-    DiGraph()
+#
+# def run():
+#     g = DiGraph()
+#     print(g.mc)
+#
+# if __name__ == '__main__':
+#     DiGraph()
+

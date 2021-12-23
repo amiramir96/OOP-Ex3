@@ -57,8 +57,9 @@ class DiGraph(GraphInterface.GraphInterface):
         return self.edge_size
 
     def get_all_v(self) -> dict:
-        """return a dictionary of all the nodes in the Graph, each node is represented using a pair
-         (node_id, node_data)
+        """
+        return a dictionary of all the nodes in the Graph, each node is represented using a pair
+        (node_id, node_data)
         """
         all_node_dict = {}
         for dict_of_nodes in self.node_map.values():

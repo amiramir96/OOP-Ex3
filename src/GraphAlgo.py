@@ -4,6 +4,11 @@ import json
 from src import GraphAlgoInterface, GraphInterface, DiGraph
 from src.Dijkstra import Dijkstra
 
+"""
+:param node_id: index of relevant node in the graph
+:return: node_id modulo 1000
+"""
+
 
 def key_transform(node_id):
     return node_id % 1000
@@ -127,7 +132,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         # for each node, add it and all the edges coming out of him
         for node in self.graph.get_all_v().values():
             node_dict = {'id': node[0],
-                         'pos': str(node[1][0])+','+str(node[1][1])+','+str(node[1][2])}
+                         'pos': str(node[1][0]) + ',' + str(node[1][1]) + ',' + str(node[1][2])}
             g['Nodes'].append(node_dict)
             nodes_added += 1
             for edge in self.get_graph().all_out_edges_of_node(node[0]).values():
@@ -143,7 +148,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         # write as pretty print to the file
         with open(path, 'w') as file:
             file.write(json.dumps(g, sort_keys=True, indent=4))
-            print(json.dumps(g, sort_keys=True, indent=4))#TODO delete
+            print(json.dumps(g, sort_keys=True, indent=4))  # TODO delete
             return True
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):

@@ -4,7 +4,7 @@ from src import GraphInterface
 def key_transform(node_id: int):
     """
     :param node_id: index of relevant node in the graph
-    :return:
+    :return: node_id modulo 1000
     """
     return node_id % 1000
 
@@ -64,7 +64,7 @@ class DiGraph(GraphInterface.GraphInterface):
         all_node_dict = {}
         for dict_of_nodes in self.node_map.values():
             for node in dict_of_nodes.items():
-                all_node_dict[node[0]] = node
+                all_node_dict[node[0]] = (node[0], node[1])
         return all_node_dict
 
     def all_in_edges_of_node(self, id1: int) -> dict:
@@ -74,7 +74,7 @@ class DiGraph(GraphInterface.GraphInterface):
         in_edges_dict = {}
         if id1 in self.edge_in_map.get(key_transform(id1)):
             for edge in self.edge_in_map.get(key_transform(id1)).get(id1).items():
-                in_edges_dict[edge[0]] = edge
+                in_edges_dict[edge[0]] = edge[1]
         return in_edges_dict
 
     def all_out_edges_of_node(self, id1: int) -> dict:
@@ -84,7 +84,7 @@ class DiGraph(GraphInterface.GraphInterface):
         out_edges_dict = {}
         if id1 in self.edge_out_map.get(key_transform(id1)):
             for edge in self.edge_out_map.get(key_transform(id1)).get(id1).items():
-                out_edges_dict[edge[0]] = edge
+                out_edges_dict[edge[0]] = edge[1]
         return out_edges_dict
 
     def get_mc(self) -> int:

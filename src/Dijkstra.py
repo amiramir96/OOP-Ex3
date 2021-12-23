@@ -4,36 +4,51 @@ from src import DiGraph
 from queue import PriorityQueue
 import math
 
+"""
+    this class is used to be like a BRIDGE between the pathetic priority queue of python
+    to work like p.queue of java with COMPERATOR function
+    in place to set the lambda cmp func directly to the p.queue, 
+    there is a class that "steal" the lower than and equal of comparing methods and force the priority queue to compare in the way we decided here
+    this way - we can decide to compare two nodes via its dist_map value f3.. 
+"""
 
-class _Wrapper:
-    def __init__(self, item, key):
-        self.item = item
-        self.key = key
+
+class Bridge_class:
+    def __init__(self, node_id: int, comperator_func):
+        self.node_id = node_id
+        self.cmp_func = comperator_func
 
     def __lt__(self, other):
-        return self.key(self.item) < other.key(other.item)
+        return self.cmp_func(self.node_id) < other.cmp_func(other.node_id)
 
     def __eq__(self, other):
-        return self.key(self.item) == other.key(other.item)
+        return self.cmp_func(self.node_id) == other.cmp_func(other.node_id)
 
 
-class KeyPriorityQueue(PriorityQueue):
+"""
+    this class inherit from priority queue BUT:
+    use Bridge_class to "push" another mechanic of comparing between nodes in the way we decide
+    huge credit to comment 2 in this link: https://stackoverflow.com/questions/57487170/is-it-possible-to-pass-a-comparator-to-a-priorityqueue-in-python
+"""
+
+
+class ExtendedPriorityQueue(PriorityQueue):
     def __init__(self, key):
         self.key = key
         super().__init__()
 
     def _get(self):
-        wrapper = super()._get()
-        return wrapper.item
+        bridge = super()._get()
+        return bridge.node_id
 
     def _put(self, item):
-        super()._put(_Wrapper(item, self.key))
+        super()._put(Bridge_class(item, self.key))
 
 
 def key_transform(node_id: int):
     """
-    :param node_id:
-    :return: key modolu 1000 (first dict key)
+    :param node_id: index of relevant node in the graph
+    :return: node_id modulo 1000
     """
     return node_id % 1000
 
@@ -67,7 +82,7 @@ def Dijkstra(src_node: int, curr_graph: DiGraph.DiGraph):
      * running time O(|E|log|V| + |V|log|V|)
     :param src_node: which node we start algo from
     :param curr_graph: relevant graph
-    :return: tuple of (dist_map, prev_map, visit_map)
+    :return: nothing yet.
     """
     """
     map mechanics:
@@ -83,7 +98,7 @@ def Dijkstra(src_node: int, curr_graph: DiGraph.DiGraph):
         return dist_map, prev_map, visit_map
 
     # create min_heap via our crafted heap (that can get a lambada function)
-    min_heap = KeyPriorityQueue(key=cmp_to_key(lambda node1, node2: -1
+    min_heap = ExtendedPriorityQueue(key=cmp_to_key(lambda node1, node2: -1
     if dist_map.get(key_transform(node1))[node1] < dist_map.get(key_transform(node2))[node2]
     else (0 if dist_map.get(key_transform(node1))[node1] == dist_map.get(key_transform(node2))[node2]
           else 1)))

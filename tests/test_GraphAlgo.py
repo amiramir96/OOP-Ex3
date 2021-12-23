@@ -1,5 +1,8 @@
 from unittest import TestCase
 
+import algo as algo
+import upstream as upstream
+
 from src.GraphAlgo import GraphAlgo
 
 

@@ -74,7 +74,7 @@ class DiGraph(GraphInterface.GraphInterface):
         in_edges_dict = {}
         if id1 in self.edge_in_map.get(key_transform(id1)):
             for edge in self.edge_in_map.get(key_transform(id1)).get(id1).items():
-                in_edges_dict[edge[0]] = edge[1]
+                in_edges_dict[edge[0]] = edge
         return in_edges_dict
 
     def all_out_edges_of_node(self, id1: int) -> dict:
@@ -84,7 +84,7 @@ class DiGraph(GraphInterface.GraphInterface):
         out_edges_dict = {}
         if id1 in self.edge_out_map.get(key_transform(id1)):
             for edge in self.edge_out_map.get(key_transform(id1)).get(id1).items():
-                out_edges_dict[edge[0]] = edge[1]
+                out_edges_dict[edge[0]] = edge
         return out_edges_dict
 
     def get_mc(self) -> int:

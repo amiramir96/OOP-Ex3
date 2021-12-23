@@ -97,7 +97,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
                          'pos': str(node[1][0])+','+str(node[1][1])+','+str(node[1][2])}
             g['Nodes'].append(node_dict)
             nodes_added += 1
-            for edge in self.graph.all_in_edges_of_node(node[0]).values:
+            for edge in self.get_graph().all_out_edges_of_node(node[0]).values():
                 edge_dict = {'src': node[0],
                              'w': edge[1],
                              'dest': edge[0]}
@@ -105,7 +105,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
                 edges_added += 1
 
         # make sure all the graph is in the dict
-        if total_e != nodes_added or total_e != edges_added:
+        if total_v != nodes_added or total_e != edges_added:
             return False
         # write as pretty print to the file
         with open(path, 'w') as file:

@@ -1,13 +1,27 @@
+import sys
 from typing import List
+import json
 from src import GraphAlgoInterface, GraphInterface, DiGraph
 
 
 class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
-    def get_graph(self) -> GraphInterface:
+    def __init__(self, *args):
+        # empty initialization
+        if len(args) == 0:
+            self.graph = None
+        # received graph
+        elif len(args) > 0 and type(args[0]) == GraphInterface:
+            self.graph = args[0]
+        # received string (file path)
+        elif len(args) > 0 and type(args[0]) == str:
+            self.load_from_json(args[0])
+
+    def get_graph(self) -> GraphInterface.GraphInterface:
         """
         :return: the directed graph on which the algorithm works on.
         """
+        return self.graph
 
     def load_from_json(self, file_name: str) -> bool:
         """
@@ -15,7 +29,39 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         @param file_name: The path to the json file
         @returns True if the loading was successful, False o.w.
         """
-        raise NotImplementedError
+        self.graph = DiGraph.DiGraph()
+        success = True
+        # load file for reading
+        curr_path = sys.path[0]  # current path from which the script is running
+        # make sure the script isn't run from 'src' or 'tests' directory,
+        # so we will get the path we want
+        if curr_path[-3:] == 'src':
+            # replace last occurrence of src
+            # see: https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
+            curr_path = curr_path.rsplit('src', 1)[0]
+        if curr_path[-5:] == 'tests':
+            # replace last occurrence of tests
+            curr_path = curr_path.rsplit('tests', 1)[0]
+        if curr_path[-1:] != '\\':
+            curr_path += '\\'
+        path = curr_path + file_name
+        with open(path, 'r') as file:
+            data = json.load(file)
+
+        # add nodes
+        for node in data['Nodes']:
+            pos = tuple(map(float, node['pos'].split(',')))
+            curr_sec = self.graph.add_node(node['id'], pos)
+            if not curr_sec:
+                success = False
+
+        # add edges
+        for edge in data['Edges']:
+            curr_sec = self.get_graph().add_edge(edge['src'], edge['dest'], edge['w'])
+            if not curr_sec:
+                success = False
+
+        return success
 
     def save_to_json(self, file_name: str) -> bool:
         """

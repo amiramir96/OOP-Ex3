@@ -57,13 +57,14 @@ class DiGraph(GraphInterface.GraphInterface):
         return self.edge_size
 
     def get_all_v(self) -> dict:
-        """return a dictionary of all the nodes in the Graph, each node is represented using a pair
-         (node_id, node_data)
+        """
+        return a dictionary of all the nodes in the Graph, each node is represented using a pair
+        (node_id, node_data)
         """
         all_node_dict = {}
         for dict_of_nodes in self.node_map.values():
             for node in dict_of_nodes.items():
-                all_node_dict[node[0]] = node[1]
+                all_node_dict[node[0]] = (node[0], node[1])
         return all_node_dict
 
     def all_in_edges_of_node(self, id1: int) -> dict:

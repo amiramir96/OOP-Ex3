@@ -2,6 +2,39 @@ import sys
 from typing import List
 import json
 from src import GraphAlgoInterface, GraphInterface, DiGraph
+from src.Dijkstra import Dijkstra
+
+
+def key_transform(node_id):
+    return node_id % 1000
+
+
+def parents_list_helper(id1: int, id2: int, dist_map: dict, parents_map: dict):
+    """
+    use prev_map form dijkstra to return list of nodes that represents the shortes path from id1 to id2
+    :param id1: src_node
+    :param id2: dest_node
+    :param parents_map: output from dijkstra (prev_map) - ea node_id key is point to its father in the shortest path
+    :return: parents list from id1 to id2 if exist, [] blank list if not exist
+    """
+    # ensure valid input
+    if id2 not in parents_map.get(key_transform(id2)):
+        return float('inf'), []
+    # init vars
+    parents_list = []
+    curr_node = id2
+    while curr_node != -1 and curr_node != id1:
+        # loop over anccesor parents of id2 till stands on id1 or -1 (represent dead end)
+        parents_list.insert(0, curr_node)
+        curr_node = parents_map.get(curr_node % 1000)[curr_node]
+
+    if curr_node == id1:
+        # last parent is id1, found path
+        parents_list.insert(0, curr_node)
+        return dist_map.get(key_transform(id2))[id2], parents_list
+    else:
+        # no existing path
+        return float('inf'), []
 
 
 class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
@@ -119,24 +152,15 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         @param id1: The start node id
         @param id2: The end node id
         @return: The distance of the path, a list of the nodes ids that the path goes through
-        Example:
-#      >>> from GraphAlgo import GraphAlgo
-#       >>> g_algo = GraphAlgo()
-#        >>> g_algo.addNode(0)
-#        >>> g_algo.addNode(1)
-#        >>> g_algo.addNode(2)
-#        >>> g_algo.addEdge(0,1,1)
-#        >>> g_algo.addEdge(1,2,4)
-#        >>> g_algo.shortestPath(0,1)
-#        (1, [0, 1])
-#        >>> g_algo.shortestPath(0,2)
-#        (5, [0, 1, 2])
         Notes:
         If there is no path between id1 and id2, or one of them dose not exist the function returns (float('inf'),[])
         More info:
         https://en.wikipedia.org/wiki/Dijkstra's_algorithm
         """
-        raise NotImplementedError
+        # reminder: dij[0]=dict_map, dij[1]=prev_map, dij[2]=visit_map
+        ans_tuple = Dijkstra(id1, self.graph)
+        ans = parents_list_helper(id1, id2, ans_tuple[0], ans_tuple[1])  # tuple of (weight, list)
+        return ans
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """

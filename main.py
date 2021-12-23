@@ -1,3 +1,5 @@
+import queue
+
 from src import *
 from src.DiGraph import DiGraph
 from src.GraphAlgo import GraphAlgo
@@ -106,4 +108,20 @@ def check3():
 
 
 if __name__ == '__main__':
-    check()
+    # check()
+    q = queue.PriorityQueue(lambda x1,x2: 1 if x1[1] > x2[1] else (0 if x1[1]==x2[1] else -1))
+    a = (3, 1)
+    b = (2, 2.1)
+    c = (4, 11)
+
+    q.put(b)
+    q.put(a)
+    q.put(c)
+
+    # q.put(10)
+    # q.put(5)
+    # q.put(11)
+    # q.put(3)
+    print(q.get(0))
+    print(q.get(0))
+    print(q.get(0))

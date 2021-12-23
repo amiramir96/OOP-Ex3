@@ -152,26 +152,34 @@ class DiGraph(GraphInterface.GraphInterface):
         Note: if the node id does not exists the function will do nothing
         """
         """
-            4 phases:
+            3 phases:
             1- loop over all the out_edges of the curr nodes and remove them from the in_edges struct
             2- loop over all the in_edges of the curr nodes and remove them from the out_edges struct
-            4- edit inner vars
+            3- edit inner vars
         """
         if node_id not in self.node_map.get(key_transform(node_id)):
             # node is not exisiting in the graph
             return False
         # phase 1
         i = 0
+        # add to list all the relevant edge that shall be removed
+        # this way - avoid from RuntimeError: dictionary changed size during iteration
+        removal_list = []
         if self.edge_out_map.get(key_transform(node_id)).get(node_id) is not None:
             for out_edge_dest in self.edge_out_map.get(key_transform(node_id)).get(node_id).keys():
-                self.remove_edge(node_id, out_edge_dest)
+                removal_list.append(out_edge_dest)
                 i = i+1
+            for dest_edge in removal_list:
+                self.remove_edge(node_id, dest_edge)
         # phase 2
         j = 0
+        removal_list = []
         if self.edge_in_map.get(key_transform(node_id)).get(node_id) is not None:
             for in_edge_src in self.edge_in_map.get(key_transform(node_id)).get(node_id).keys():
-                self.remove_edge(in_edge_src, node_id)
+                removal_list.append(in_edge_src)
                 j = j+1
+            for in_edge in removal_list:
+                self.remove_edge(in_edge, node_id)
         # phase 3
         self.mc = self.mc + 1
         self.node_size = self.node_size - 1

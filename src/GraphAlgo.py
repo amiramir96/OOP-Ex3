@@ -69,7 +69,49 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         @param file_name: The path to the out file
         @return: True if the save was successful, False o.w.
         """
-        raise NotImplementedError
+        curr_path = sys.path[0]  # current path from which the script is running
+        # make sure the script isn't run from 'src' or 'tests' directory,
+        # so we will get the path we want
+        if curr_path[-3:] == 'src':
+            # replace last occurrence of src
+            # see: https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
+            curr_path = curr_path.rsplit('src', 1)[0]
+        if curr_path[-5:] == 'tests':
+            # replace last occurrence of tests
+            curr_path = curr_path.rsplit('tests', 1)[0]
+        if curr_path[-1:] != '\\':
+            curr_path += '\\'
+        path = curr_path + file_name
+
+        # create dictionary to write
+        g = {'Edges': [],
+             'Nodes': []}
+        # add nodes and edges
+        total_v = self.graph.v_size()  # total number of nodes/ edges
+        total_e = self.graph.e_size()
+        nodes_added = 0
+        edges_added = 0
+        # for each node, add it and all the edges coming out of him
+        for node in self.graph.get_all_v().values():
+            node_dict = {'id': node[0],
+                         'pos': str(node[1][0])+','+str(node[1][1])+','+str(node[1][2])}
+            g['Nodes'].append(node_dict)
+            nodes_added += 1
+            for edge in self.graph.all_in_edges_of_node(node[0]).values:
+                edge_dict = {'src': node[0],
+                             'w': edge[1],
+                             'dest': edge[0]}
+                g['Edges'].append(edge_dict)
+                edges_added += 1
+
+        # make sure all the graph is in the dict
+        if total_e != nodes_added or total_e != edges_added:
+            return False
+        # write as pretty print to the file
+        with open(path, 'w') as file:
+            file.write(json.dumps(g, sort_keys=True, indent=4))
+            print(json.dumps(g, sort_keys=True, indent=4))#TODO delete
+            return True
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
         """

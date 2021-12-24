@@ -1,8 +1,11 @@
+import multiprocessing
 import sys
 from typing import List
 import json
 from src import GraphAlgoInterface, GraphInterface, DiGraph
-from src.Dijkstra import Dijkstra
+from src.BFS import iterative_BFS
+from src.BFS import iterative_transpose_BFS
+from src.Dijkstra import Dijkstra, longest_road, multi_process_beat_thread
 
 """
 :param node_id: index of relevant node in the graph
@@ -54,12 +57,37 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         # received string (file path)
         elif len(args) > 0 and type(args[0]) == str:
             self.load_from_json(args[0])
+        self.is_connected = -1
 
     def get_graph(self) -> GraphInterface.GraphInterface:
         """
         :return: the directed graph on which the algorithm works on.
         """
         return self.graph
+
+    def is_connected_graph(self, src_node: int):
+        """
+        use BFS algorithm to check if graph is strongly connected
+        given a curr_node in the graph - this happens if graph stands within the 2 next terms:
+            1 - there is a path from that curr_node to any other node in the graph
+            2 - there is a path from any node in the graph to that curr_node
+        Running Time: O(|E| + Log|V|)
+        :param src_node: node to start from the BFS
+        :return: boolean
+        """
+        # ez cases - graph already have been checked:
+        if self.is_connected == 0:
+            return False
+        if self.is_connected == 1:
+            return True
+        # have to calculate
+        if self.is_connected == -1:
+            if not iterative_BFS(self.get_graph(), src_node) or not iterative_transpose_BFS(self.get_graph(), src_node):
+                self.is_connected = 0
+                return False
+            else:
+                self.is_connected = 1
+                return True
 
     def load_from_json(self, file_name: str) -> bool:
         """
@@ -98,7 +126,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             curr_sec = self.get_graph().add_edge(edge['src'], edge['dest'], edge['w'])
             if not curr_sec:
                 success = False
-
+        self.is_connected = -1  # zero is_connected flag
         return success
 
     def save_to_json(self, file_name: str) -> bool:
@@ -161,6 +189,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         If there is no path between id1 and id2, or one of them dose not exist the function returns (float('inf'),[])
         More info:
         https://en.wikipedia.org/wiki/Dijkstra's_algorithm
+        Running Time: O(|E|*Log(|V|))
         """
         # reminder: dij[0]=dict_map, dij[1]=prev_map, dij[2]=visit_map
         ans_tuple = Dijkstra(id1, self.graph)
@@ -176,9 +205,74 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
     def centerPoint(self) -> (int, float):
         """
-        Finds the node that has the shortest distance to it's farthest node.
-        :return: The nodes id, min-maximum distance
+        1. can be center if and only if there the graph is connected
+        2. loop over ea node and use dijkstra on
+        3. take the longest weighted path of ea node from bullet 2
+        4. the minimal node with the longest weighted path is the center!
+        Running Time: O(|V|*|E|Log(|V|))
+        :return:
         """
+        # hold one node from the graph
+        nodes_map = self.get_graph().get_all_v()
+        for node in nodes_map.keys():
+            if node is None:
+                return None, float('inf')
+            else:
+                first_n = node
+            break
+        # ensure that the graph is connected
+        if self.is_connected_graph(first_n):
+            # inits
+            longest_bet_shortest = float('inf')
+            ans_node = -1
+
+            if self.get_graph().e_size() + self.get_graph().v_size() > 20000 and multiprocessing.cpu_count() > 2:
+                # gonna use multi peocessing, split nodes between
+                core_allocate = multiprocessing.cpu_count() - 1  # keep one core outside the game - ensure pc wont die
+                list_list_nodes = []  # gonna work 2D
+
+                for i in range(core_allocate):
+                    # create amount of inner list as amount of cores to allocate to multi processing
+                    list_list_nodes.append([])
+
+                for node in nodes_map.keys():
+                    # split nodes equally as possible between all the inner lists
+                    x = node % core_allocate
+                    list_list_nodes[x].append(node)
+
+                # create core_allocate-1 diff processes for ea list
+                my_first_multi_processing = []
+                for listt in list_list_nodes:
+                    my_first_multi_processing.append(\
+                        multiprocessing.Process(target=multi_process_beat_thread, args=[listt]))
+
+                for p in my_first_multi_processing:
+                    p.start()
+
+                for pi in my_first_multi_processing:
+                    pi.join()
+
+                for tup in list_list_nodes:
+                    if tup[1] < longest_bet_shortest:
+                        longest_bet_shortest = tup[1]
+                        ans_node = tup[0]
+
+                return ans_node, longest_bet_shortest  # ans :-)
+
+            else:  # small amount of objects, multi processing shall delay our running time
+                # loop over all nodes
+                for node in nodes_map.keys():
+                    # use dijkstra
+                    dist_map = Dijkstra(node, self.get_graph())[0]
+                    # take longest val and compare it to others
+                    longest_temp = longest_road(dist_map)
+                    if longest_temp < longest_bet_shortest:
+                        # save only if its the smallest value till now
+                        longest_bet_shortest = longest_temp
+                        ans_node = node
+                return ans_node, longest_bet_shortest  # ans :-)
+        else:  # else there is no center
+            return None, float('inf')
 
     def plot_graph(self) -> None:
         """

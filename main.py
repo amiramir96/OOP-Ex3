@@ -1,4 +1,6 @@
+import multiprocessing
 import queue
+import time
 
 from src import *
 from src.DiGraph import DiGraph
@@ -106,22 +108,35 @@ def check3():
     print(g_algo.TSP([1, 2, 4]))
     g_algo.plot_graph()
 
+def printq(qlist):
+    for x in qlist:
+        print(str(x) + " im from list: "+ str(x%2))
+
+def do_some():
+    print('sleeping 1 seconds..')
+    time.sleep(1)
+    print('done sleeping..')
 
 if __name__ == '__main__':
     # check()
-    q = queue.PriorityQueue(lambda x1,x2: 1 if x1[1] > x2[1] else (0 if x1[1]==x2[1] else -1))
-    a = (3, 1)
-    b = (2, 2.1)
-    c = (4, 11)
+    list_of_lists = []
+    core_allocate = int((multiprocessing.cpu_count())-1)
+    for i in range(core_allocate):
+        list_of_lists.append([])
 
-    q.put(b)
-    q.put(a)
-    q.put(c)
+    for i in range(100000):
+        x = i % core_allocate
+        list_of_lists[x].append(i)
 
-    # q.put(10)
-    # q.put(5)
-    # q.put(11)
-    # q.put(3)
-    print(q.get(0))
-    print(q.get(0))
-    print(q.get(0))
+    proccess = []
+    for x in list_of_lists:
+            p = multiprocessing.Process(target=printq, args=[x])
+            proccess.append(p)
+
+    for x in proccess:
+        x.start()
+
+    for x in proccess:
+        x.join()
+    print("amount of core to use: ", core_allocate)
+    print("done")

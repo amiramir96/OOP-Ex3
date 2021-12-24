@@ -1,6 +1,4 @@
 from functools import cmp_to_key
-
-from src import DiGraph
 from queue import PriorityQueue
 import math
 
@@ -53,7 +51,7 @@ def key_transform(node_id: int):
     return node_id % 1000
 
 
-def init_maps(curr_graph: DiGraph.DiGraph, p_map: dict, d_map: dict, v_map: dict):
+def init_maps(curr_graph, p_map: dict, d_map: dict, v_map: dict):
     """
     initialize maps for Dijkstra algorithm
     :param curr_graph:
@@ -74,7 +72,7 @@ def init_maps(curr_graph: DiGraph.DiGraph, p_map: dict, d_map: dict, v_map: dict
         v_map.get(k_node)[node] = False
 
 
-def Dijkstra(src_node: int, curr_graph: DiGraph.DiGraph):
+def Dijkstra(src_node: int, curr_graph):
     """
      * dijkstra algo via: https://www.youtube.com/watch?v=pSqmAO-m7Lk
                     || https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
@@ -134,3 +132,37 @@ def Dijkstra(src_node: int, curr_graph: DiGraph.DiGraph):
                     min_heap.put(dest_node)  # put in heap
 
     return dist_map, prev_map, visit_map
+
+
+def longest_road(dist_map):
+    """
+    :param dist_map: of dijkstra output
+    :return: max distance value in the dist_map
+    """
+    max_dist = 0.0  # minimal
+    for inner_dictt in dist_map.values():
+        for dist in inner_dictt.values():
+            max_dist = max(dist, max_dist)  # switch for higher
+    return max_dist
+
+
+def multi_process_beat_thread(node_list: list, curr_graph):
+    """
+    meanwhile center function from graphAlgo
+    for graph with alot of objects, we would like to split between all the pc cores the dijkstra cals
+    with using this method, running time of center shall be reduce approximately of 33~50% time in graphs of more than 20k objects
+    :param node_list: list of nodes to run dijkstra on
+    :param curr_graph: graph we work on
+    :return: node_id, shortest_bet_longests
+    represents: from all the node_list, node_id is the one with the smallest longest shortest path
+    """
+    # def defualt
+    shortest_bet_longests = float('inf')
+    node_id = -1
+    for node in node_list:  # loop over all nodes
+        node_longest_path = longest_road(Dijkstra(node, curr_graph)[0])  # dijkstra + get longest
+        if node_longest_path < shortest_bet_longests:
+            # edit our best node if and only if his longest path is shorter than the curr_node
+            node_id = node
+            shortest_bet_longests = node_longest_path
+    return node_id, shortest_bet_longests

@@ -1,3 +1,5 @@
+import random
+
 from src import GraphInterface
 
 
@@ -136,6 +138,9 @@ class DiGraph(GraphInterface.GraphInterface):
         @return: True if the node was added successfully, False o.w.
         Note: if the node id already exists the node will not be added
         """
+        if pos is None:
+            # if no pos input, lets rand it! <3
+            pos = (round(random.uniform(0, 50), 4), round(random.uniform(0, 50), 4))
         if node_id in self.node_map.get(key_transform(node_id)):  # always point first to the inner relevant dict
             return False
         self.node_map.get(key_transform(node_id))[node_id] = pos  # add currectly

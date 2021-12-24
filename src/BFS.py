@@ -43,6 +43,7 @@ def key_transform(node_id: int):
 
 """
 implementation of BFS - Breadth First Search
+        Running Time: O(|E| + Log|V|)
 can be used for to check if graph "is connected" (strongly since its directed graph)
 for more details on the algorithm: https://www.youtube.com/watch?v=oDqjPvD54Ss
 using stack to hold nodes that we shall loop over all their edges
@@ -60,7 +61,7 @@ def check_visited(visited_map: dict):
     return True
 
 
-def iterative_BFS(curr_graph: DiGraph, src_node: int):
+def iterative_BFS(curr_graph, src_node: int):
     # visit dict
     visited_map = {}
     for i in range(1000):  # for more data on this strategy, look at DiGraph
@@ -97,7 +98,7 @@ node to any other nodes, and from any other node to this node)
 """
 
 
-def iterative_transpose_BFS(curr_graph: DiGraph, src_node: int):
+def iterative_transpose_BFS(curr_graph, src_node: int):
     # visit dict
     visited_map = {}
     for i in range(1000):  # for more data on this strategy, look at DiGraph

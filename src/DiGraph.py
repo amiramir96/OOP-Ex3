@@ -186,6 +186,7 @@ class DiGraph(GraphInterface.GraphInterface):
             for in_edge in removal_list:
                 self.remove_edge(in_edge, node_id)
         # phase 3
+        del self.node_map.get(key_transform(node_id))[node_id]
         self.mc = self.mc + 1
         self.node_size = self.node_size - 1
         return True

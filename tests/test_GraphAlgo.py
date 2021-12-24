@@ -1,3 +1,4 @@
+from random import randint
 from unittest import TestCase
 
 from src.DiGraph import DiGraph
@@ -38,13 +39,14 @@ class TestGraphAlgo(TestCase):
     def test_load_from_json(self):
         algo = GraphAlgo()
         algo.load_from_json(r'data\A4.json')
-        print(algo.get_graph().v_size())
+        self.assertEqual(40, algo.get_graph().v_size())
 
     def test_save_to_json(self):
         algo = GraphAlgo()
         algo.load_from_json(r'data\A4.json')
-        print(algo.get_graph().v_size())
         algo.save_to_json('data\\saved_graph.json')
+        algo.load_from_json('data\\saved_graph.json')
+        self.assertEqual(40, algo.get_graph().v_size())
 
     def test_shortest_path(self):
         """
@@ -80,21 +82,41 @@ class TestGraphAlgo(TestCase):
     def test_center_point(self):
         """
         cases:
-        less than 20k total obj (nodes+edges) - without multi processing
-            1- connected graph, check currect answer (node_id, float_weight)
-            2- not connected graph. for currect answer (None, float('inf'))
-        more than 20k total ovj (nodes+edges) - use multi processing
-        :return:
+            1. less than 20k total obj (nodes+edges) - without multi processing
+                1- connected graph, check currect answer (node_id, float_weight)
+                2- not connected graph. for currect answer (None, float('inf'))
+            2. more than 20k total ovj (nodes+edges) - use multi processing
+                2.1- connected graph, check currect answer (node_id, float_weight)
+                2.2- not connected graph. for currect answer (None, float('inf'))
         """
         algo = GraphAlgo()
+
+        # case 1.1
         algo.load_from_json(r'data\A5.json')
         ans = algo.centerPoint()
         self.assertEqual(ans[0], 40)
         self.assertEqual(ans[1], 9.291743173960954)
+        # case 1.2
         algo.get_graph().remove_node(40)
         ans = algo.centerPoint()
         self.assertEqual(ans[0], None)
         self.assertEqual(ans[1], float('inf'))
+
+        # case 2.1
+        algo.load_from_json(r'data\A5.json')
+        for i in range(1000):
+            algo.get_graph().add_node(i)
+        all_nodes = algo.get_graph().get_all_v()
+        for node in all_nodes.keys():
+            for i in range(20):
+                algo.get_graph().add_edge(node, randint(0, 1000), randint(1, 22))
+        algo.centerPoint()
+        self.assertEqual(algo.get_graph().v_size(), 1000)
+        # case 2.2
+        algo.get_graph().remove_node(40)
+        algo.get_graph().add_node(40, (1, 1))
+        algo.centerPoint()
+        self.assertEqual(algo.get_graph().v_size(), 1000)
 
     def test_plot_graph(self):
         self.fail()

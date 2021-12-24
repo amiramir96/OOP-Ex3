@@ -134,6 +134,67 @@ def Dijkstra(src_node: int, curr_graph):
     return dist_map, prev_map, visit_map
 
 
+def Dijkstra_transpose(src_node: int, curr_graph):
+    """
+        --------- same as above, twist - run over the in_edges of the graph nodes -> look on the "transposed graph" ------
+     * using regular priority queue(binomal min heap)
+     * running time O(|E|log|V| + |V|log|V|)
+    :param src_node: which node we start algo from
+    :param curr_graph: relevant graph
+    :return: nothing yet.
+    """
+    """
+    map mechanics:
+        1st key->key_transform(curr_node_id), value->inner dict 
+        2nd key->curr_node_id, value->via type of map 
+    """
+    prev_map = {}  # value->father of the curr node
+    dist_map = {}  # value->distance from src_node to curr_node
+    visit_map = {}  # value->visited in curr_node while the algo running
+    init_maps(curr_graph, prev_map, dist_map, visit_map)  # init before start
+    # ensure valid input
+    if src_node not in visit_map.get(key_transform(src_node)):
+        return dist_map, prev_map, visit_map
+
+    # create min_heap via our crafted heap (that can get a lambada function)
+    min_heap = ExtendedPriorityQueue(key=cmp_to_key(lambda node1, node2: -1
+    if dist_map.get(key_transform(node1))[node1] < dist_map.get(key_transform(node2))[node2]
+    else (0 if dist_map.get(key_transform(node1))[node1] == dist_map.get(key_transform(node2))[node2]
+          else 1)))
+
+    # init src node and vars
+    dist_map.get(key_transform(src_node))[src_node] = 0.0
+    min_heap.put(src_node)
+    new_dist: float
+    curr_node: int
+    dest_node: int
+    in_edges: dict
+
+    while not min_heap.empty():
+        # pop first node
+        curr_node = min_heap.get()
+        # mark him as visited
+        visit_map.get(key_transform(curr_node))[curr_node] = True
+        # get all his edges
+        in_edges = curr_graph.all_in_edges_of_node(curr_node)
+        # loop over all his IN edges - its TRANSPOSED GRAPH!!!
+        if in_edges is not None:
+
+            for edge in in_edges.values():
+                dest_node = edge[0]  # save as var the destination node of the edge
+                if visit_map.get(key_transform(dest_node))[dest_node]:
+                    continue  # pass if visited
+
+                new_dist = dist_map.get(key_transform(curr_node))[curr_node] + edge[1]  # cal new distance
+                if new_dist < dist_map.get(key_transform(dest_node))[dest_node]:
+                    # edit only if there is shorter distance
+                    dist_map.get(key_transform(dest_node))[dest_node] = new_dist  # distance
+                    prev_map.get(key_transform(dest_node))[dest_node] = curr_node  # curr_node is the father
+                    min_heap.put(dest_node)  # put in heap
+
+    return dist_map, prev_map, visit_map
+
+
 def longest_road(dist_map):
     """
     :param dist_map: of dijkstra output

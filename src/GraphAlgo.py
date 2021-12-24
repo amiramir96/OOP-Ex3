@@ -5,7 +5,7 @@ import json
 from src import GraphAlgoInterface, GraphInterface, DiGraph
 from src.BFS import iterative_BFS
 from src.BFS import iterative_transpose_BFS
-from src.Dijkstra import Dijkstra, longest_road, multi_process_beat_thread
+from src.Dijkstra import Dijkstra, longest_road, multi_process_beat_thread, Dijkstra_transpose
 
 """
 :param node_id: index of relevant node in the graph
@@ -20,6 +20,7 @@ def key_transform(node_id):
 def parents_list_helper(id1: int, id2: int, dist_map: dict, parents_map: dict):
     """
     use prev_map form dijkstra to return list of nodes that represents the shortes path from id1 to id2
+    :param dist_map: output from dijkstra (dist_map)
     :param id1: src_node
     :param id2: dest_node
     :param parents_map: output from dijkstra (prev_map) - ea node_id key is point to its father in the shortest path
@@ -44,6 +45,25 @@ def parents_list_helper(id1: int, id2: int, dist_map: dict, parents_map: dict):
         # no existing path
         return float('inf'), []
 
+
+def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents_map: dict):
+    """
+    look for shortest neighbour from the list at the dist_map that got output from dijkstra
+    than return dist_between_node, list_path
+    :param neighbours: all the relevant nodes to be checken
+    :param dist_map:
+    :param pivot_node: src_node
+    :param parents_map: output from dijkstra (prev_map) - ea node_id key is point to its father in the shortest path
+    :return: parents list from id1 to id2 if exist, [] blank list if not exist
+    """
+    min_dist = float('inf')
+    node_id = -1
+    for x in neighbours:
+        # iterate over all the neighbours and take the one with minimal distance from pivot_node
+        if min_dist > dist_map.get(x % 1000)[x % 1000]:
+            min_dist = dist_map.get(x % 1000)[x % 1000]
+            node_id = x
+    return parents_list_helper(pivot_node, node_id, dist_map, parents_map)
 
 class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
@@ -208,7 +228,84 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         Finds the shortest path that visits all the nodes in the list
         :param node_lst: A list of nodes id's
         :return: A list of the nodes id's in the path, and the overall distance
+        algorithm name - "double ganger":
+            always compare between two sides of the road ^^
+            phases:
+            loop over the list of nodes and:
+            1. first node will be compared between his out and in paths -> who have shorter path to one of the remaining nodes
+            2. any other iterate from now will compare between shortest path of in_edges of first list node to shortest path of out_edges of last list node
+            3. if there is node which we didnt set into the ans list means there is no exisiting path to / from him that can be summerize with all the others
         """
+        # dumb cases.. irrelevant
+        global forward_shortest, backward_shortest
+        if len(node_lst) == 0:
+            return None, float('inf')
+        if len(node_lst) == 1:
+            return [1], 0.0
+
+        # init vars:
+        curr_node = node_lst[0]
+        remaining_list = node_lst.copy()
+        remaining_list.pop()
+        ans_list = [curr_node]
+        total_distance = 0
+        # remaining list
+        # ans list
+        # define multiproccessing "process_in", "process_out"
+        # save temporary dicts for in, out dijkstra dist_map and prev_map
+        additive_flag = True  # flag to know if we added last time in the end or start
+        # first phase - check out_edge vs in_edges of first nodes with dijkstra + multi_proccess
+        if self.get_graph().e_size() + self.get_graph().v_size() < 100000: # small enough so better not use multi process
+            dij_maps = Dijkstra(curr_node, self.get_graph())
+            forward_shortest = nearest_neighbour(curr_node, remaining_list, dij_maps[0], dij_maps[1])
+            trans_dij_maps = Dijkstra_transpose(curr_node, self.get_graph())
+            backward_shortest = nearest_neighbour(curr_node, remaining_list, trans_dij_maps[0], trans_dij_maps[1])
+            if forward_shortest[0] > backward_shortest[0]:
+                backward_shortest[1].pop()
+                ans_list = backward_shortest[1].reverse() + ans_list
+                total_distance = total_distance + backward_shortest[0]
+                remaining_list.remove(backward_shortest[1][0])
+                additive_flag = False
+            else:
+                forward_shortest[1].pop()
+                ans_list = ans_list + forward_shortest[1]
+                total_distance = total_distance + forward_shortest[0]
+                remaining_list.remove(forward_shortest[1][0])
+                additive_flag = True
+
+        else: # multi process for this two dijkstras
+            b=2
+
+        # 2nd phase - always keep one dijkstra output and drop one, and calculate dijkstra for that node
+        leng = len(remaining_list)
+        for i in range(leng):
+            if additive_flag:
+                curr_node = ans_list[0]
+                trans_dij_maps = Dijkstra_transpose(curr_node, self.get_graph())
+                backward_shortest = nearest_neighbour(curr_node, remaining_list, trans_dij_maps[0], trans_dij_maps[1])
+            else:
+                curr_node = ans_list[len(ans_list)-1]
+                dij_maps = Dijkstra(curr_node, self.get_graph())
+                forward_shortest = nearest_neighbour(curr_node, remaining_list, dij_maps[0], dij_maps[1])
+
+            if forward_shortest[0] > backward_shortest[0]:
+                backward_shortest[1].pop()
+                ans_list = backward_shortest[1].reverse() + ans_list
+                total_distance = total_distance + backward_shortest[0]
+                remaining_list.remove(backward_shortest[1][0])
+                additive_flag = False
+            else:
+                forward_shortest[1].pop()
+                ans_list = ans_list + forward_shortest[1]
+                total_distance = total_distance + forward_shortest[0]
+                remaining_list.remove(forward_shortest[1][0])
+                additive_flag = True
+
+        # check if remaining list is empty (other wise - no solution)
+        if len(remaining_list) > 0:
+            return None, float('inf')
+        else:
+            return ans_list, total_distance
 
     def centerPoint(self) -> (int, float):
         """
@@ -217,7 +314,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         3. take the longest weighted path of ea node from bullet 2
         4. the minimal node with the longest weighted path is the center!
         Running Time: O(|V|*|E|Log(|V|))
-        :return:
+        :return: (node_id_center, longest_path_of_node_id)
         """
         if self.mc != self.graph.get_mc():
             # graph has been changed we cant rely on the curr is_connected flag :/
@@ -254,7 +351,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
                 my_first_multi_processing = []
                 for listt in list_list_nodes:
                     my_first_multi_processing.append( \
-                        multiprocessing.Process(target=multi_process_beat_thread, args=[listt]))
+                        multiprocessing.Process(target=multi_process_beat_thread, args=[listt, self.get_graph()]))
 
                 for p in my_first_multi_processing:
                     p.start()

@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from src.GraphAlgoInterface import GraphAlgoInterface
 from src.GraphAlgo import GraphAlgo
@@ -23,6 +25,33 @@ def scale(val, new_min, new_max, prev_min, prev_max):
     return new_min + rel_pos*(new_max-new_min)
 
 
+def a_b_given_c_m(c, m):
+    """
+    a^2 + b^2 = c^2
+    get a,b when c and his slope (m) are known
+    :param c:
+    :param m:
+    :return:
+    """
+    # b = m*a,   c^2 = a^2 + (m*a)^2,  a^2 = (c^2)/(1+m^2)
+    a = math.sqrt((c**2)/(1+m**2))
+    b = m*a
+    return a, b
+
+
+def draw_arrow(p1: tuple, p2: tuple, color: (int, int, int) = (0, 0, 0), radius: int = 15):
+    x1, y1, x2, y2 = p1[0], p1[1], p2[0], p2[1]
+    # where the triangle cuts the line
+    triangle_cut_point = (x1 + 0.9 * (x2-x1), y1 + 0.9 * (y2-y1))
+    inverse_line_slop = -1 / ((y2-y1)/(x2-x1))
+    x, y = a_b_given_c_m(radius/2, inverse_line_slop)
+    triangle_point1 = (triangle_cut_point[0] + x, triangle_cut_point[1] + y)
+    triangle_point2 = (triangle_cut_point[0] - x, triangle_cut_point[1] - y)
+    # draw line
+    pygame.draw.line(screen, color, (x1, y1), (x2, y2), int(radius/10))
+    pygame.draw.polygon(screen, color, [(x2, y2), triangle_point1, triangle_point2])
+
+
 def plot(g: GraphAlgoInterface):
     nodes = g.get_graph().get_all_v().values()
     #  find min and max for x and y values
@@ -33,7 +62,6 @@ def plot(g: GraphAlgoInterface):
     min_y = min(nodes, key=lambda n: n[1][1])[1][1]
     max_y = max(nodes, key=lambda n: n[1][1])[1][1]
 
-
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -43,7 +71,6 @@ def plot(g: GraphAlgoInterface):
         screen.fill(pygame.Color(239, 228, 176))
         # scale radius of nodes
         r = scale(200, 0, screen.get_width(), 0, WIDTH) / len(nodes)
-
         # paint nodes and edges
         for node in nodes:
             node_id = node[0]
@@ -58,7 +85,24 @@ def plot(g: GraphAlgoInterface):
                 dest_y = g.get_graph().get_all_v()[edge[0]][1][1]
                 dest_x = scale(dest_x, 50, screen.get_width() - 50, min_x, max_x)
                 dest_y = scale(dest_y, 150, screen.get_height() - 50, min_y, max_y)
-                pygame.draw.line(screen, pygame.Color(0,0,0),(x,y),(dest_x,dest_y),4)
+                # pygame.draw.line(screen, pygame.Color(0,0,0),(x,y),(dest_x,dest_y),4)
+                draw_arrow((x, y), (dest_x, dest_y), radius=r)
+
+        for node in nodes:
+            node_id = node[0]
+            x, y = node[1][0], node[1][1]
+            # scale position according to screen
+            x = scale(x, 50, screen.get_width()-50, min_x, max_x)
+            y = scale(y, 150, screen.get_height()-50, min_y, max_y)
+            # pygame.draw.circle(screen, pygame.Color(63, 72, 204), (x, y), r)
+            # draw edges
+            for edge in g.get_graph().all_out_edges_of_node(node[0]).values():
+                dest_x = g.get_graph().get_all_v()[edge[0]][1][0]
+                dest_y = g.get_graph().get_all_v()[edge[0]][1][1]
+                dest_x = scale(dest_x, 50, screen.get_width() - 50, min_x, max_x)
+                dest_y = scale(dest_y, 150, screen.get_height() - 50, min_y, max_y)
+                # pygame.draw.line(screen, pygame.Color(0,0,0),(x,y),(dest_x,dest_y),4)
+                draw_arrow((x, y), (dest_x, dest_y))
 
         # drawing an arrow:
         # pygame.draw.polygon(screen, (0, 0, 0),
@@ -70,5 +114,4 @@ def plot(g: GraphAlgoInterface):
 if __name__ == '__main__':
     g = GraphAlgo()
     g.load_from_json('data\\A1.json')
-    print(scale(1,0,10,0,5))
     plot(g)

@@ -119,7 +119,7 @@ def Dijkstra(src_node: int, curr_graph):
         # loop over all his OUT edges
         if out_edges is not None:
 
-            for edge in out_edges.items():
+            for edge in out_edges.values():
                 dest_node = edge[0]  # save as var the destination node of the edge
                 if visit_map.get(key_transform(dest_node))[dest_node]:
                     continue  # pass if visited

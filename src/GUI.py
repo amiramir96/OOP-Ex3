@@ -33,7 +33,7 @@ def plot(g: GraphAlgoInterface):
     min_y = min(nodes, key=lambda n: n[1][1])[1][1]
     max_y = max(nodes, key=lambda n: n[1][1])[1][1]
 
-      # radius for the nodes TODO update according to node_num
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -41,6 +41,7 @@ def plot(g: GraphAlgoInterface):
                 exit(0)
 
         screen.fill(pygame.Color(239, 228, 176))
+        # scale radius of nodes
         r = scale(200, 0, screen.get_width(), 0, WIDTH) / len(nodes)
 
         # paint nodes and edges

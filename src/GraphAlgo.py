@@ -108,6 +108,8 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         if curr_path[-5:] == 'tests':
             # replace last occurrence of tests
             curr_path = curr_path.rsplit('tests', 1)[0]
+        if curr_path[-8:] == 'graphics':
+            curr_path = curr_path.rsplit('graphics', 1)[0]
         if curr_path[-1:] != '\\':
             curr_path += '\\'
         path = curr_path + file_name

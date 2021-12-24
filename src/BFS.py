@@ -14,14 +14,14 @@ class myStack:
 
     def pop(self):
         # -1 for empty, item for exist
-        if len(self.stack) == 0:
+        if self.isEmpty():
             return -1
         else:
-            self.stack.pop(0)
+            return self.stack.pop(0)
 
     # add first in the list
     def push(self, node_id: int):
-        self.stack.append(node_id)
+        self.stack.insert(0, node_id)
 
     # True for empty
     def isEmpty(self):
@@ -53,7 +53,7 @@ using dict to hold boolean for ea node, if visited
 
 
 def check_visited(visited_map: dict):
-    for inner_dict_of_nodes in visited_map:
+    for inner_dict_of_nodes in visited_map.values():
         for bool in inner_dict_of_nodes.values():
             if not bool:
                 return False
@@ -71,8 +71,8 @@ def iterative_BFS(curr_graph: DiGraph, src_node: int):
     # init stack
     stack = myStack()
     stack.push(src_node)
+    visited_map.get(key_transform(src_node))[src_node] = True  # mark True since its already in the stack
     # init vars
-    temp_node: int
     dest_node: int
     edge_out_dict: dict
 
@@ -108,6 +108,7 @@ def iterative_transpose_BFS(curr_graph: DiGraph, src_node: int):
     # init stack
     stack = myStack()
     stack.push(src_node)
+    visited_map.get(key_transform(src_node))[src_node] = True  # mark True since its already in the stack
     # init vars
     temp_node: int
     dest_node: int

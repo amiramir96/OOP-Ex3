@@ -51,12 +51,15 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         # empty initialization
         if len(args) == 0:
             self.graph = None
-        # received graph
-        elif len(args) > 0 and type(args[0]) == GraphInterface:
-            self.graph = args[0]
+            self.mc = 0
         # received string (file path)
         elif len(args) > 0 and type(args[0]) == str:
             self.load_from_json(args[0])
+            self.mc = 0
+        # received graph
+        elif len(args) > 0 and (type(args[0]) == GraphInterface.GraphInterface or type(args[0]) == DiGraph.DiGraph):
+            self.graph = args[0]
+            self.mc = self.graph.get_mc()
         self.is_connected = -1
 
     def get_graph(self) -> GraphInterface.GraphInterface:
@@ -128,7 +131,9 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             curr_sec = self.get_graph().add_edge(edge['src'], edge['dest'], edge['w'])
             if not curr_sec:
                 success = False
-        self.is_connected = -1  # zero is_connected flag
+        if success:
+            self.is_connected = -1  # zero is_connected flags
+            self.mc = 0  # zero mc flag
         return success
 
     def save_to_json(self, file_name: str) -> bool:
@@ -214,6 +219,9 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         Running Time: O(|V|*|E|Log(|V|))
         :return:
         """
+        if self.mc != self.graph.get_mc():
+            # graph has been changed we cant rely on the curr is_connected flag :/
+            self.is_connected = -1
         # hold one node from the graph
         nodes_map = self.get_graph().get_all_v()
         for node in nodes_map.keys():
@@ -245,7 +253,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
                 # create core_allocate-1 diff processes for ea list
                 my_first_multi_processing = []
                 for listt in list_list_nodes:
-                    my_first_multi_processing.append(\
+                    my_first_multi_processing.append( \
                         multiprocessing.Process(target=multi_process_beat_thread, args=[listt]))
 
                 for p in my_first_multi_processing:

@@ -72,12 +72,13 @@ def init_maps(curr_graph, p_map: dict, d_map: dict, v_map: dict):
         v_map.get(k_node)[node] = False
 
 
-def Dijkstra(src_node: int, curr_graph):
+def Dijkstra(src_node: int, curr_graph, process_output=None):
     """
      * dijkstra algo via: https://www.youtube.com/watch?v=pSqmAO-m7Lk
                     || https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
      * using regular priority queue(binomal min heap)
      * running time O(|E|log|V| + |V|log|V|)
+    :param process_output: support multi processing of TSP
     :param src_node: which node we start algo from
     :param curr_graph: relevant graph
     :return: nothing yet.
@@ -130,15 +131,19 @@ def Dijkstra(src_node: int, curr_graph):
                     dist_map.get(key_transform(dest_node))[dest_node] = new_dist  # distance
                     prev_map.get(key_transform(dest_node))[dest_node] = curr_node  # curr_node is the father
                     min_heap.put(dest_node)  # put in heap
+    if process_output is not None:  # support multi processing of TSP
+        process_output[0] = (dist_map, prev_map, visit_map)
+        return 1
 
     return dist_map, prev_map, visit_map
 
 
-def Dijkstra_transpose(src_node: int, curr_graph):
+def Dijkstra_transpose(src_node: int, curr_graph, process_output=None):
     """
         --------- same as above, twist - run over the in_edges of the graph nodes -> look on the "transposed graph" ------
      * using regular priority queue(binomal min heap)
      * running time O(|E|log|V| + |V|log|V|)
+    :param process_output: # support multi processing of TSP
     :param src_node: which node we start algo from
     :param curr_graph: relevant graph
     :return: nothing yet.
@@ -191,6 +196,9 @@ def Dijkstra_transpose(src_node: int, curr_graph):
                     dist_map.get(key_transform(dest_node))[dest_node] = new_dist  # distance
                     prev_map.get(key_transform(dest_node))[dest_node] = curr_node  # curr_node is the father
                     min_heap.put(dest_node)  # put in heap
+    if process_output is not None:  # support multi processing of TSP
+        process_output[1] = (dist_map, prev_map, visit_map)
+        return 1
 
     return dist_map, prev_map, visit_map
 
@@ -207,11 +215,12 @@ def longest_road(dist_map):
     return max_dist
 
 
-def multi_process_beat_thread(node_list: list, curr_graph):
+def multi_process_beat_thread(node_list: list, curr_graph, process_output: list):
     """
     meanwhile center function from graphAlgo
     for graph with alot of objects, we would like to split between all the pc cores the dijkstra cals
     with using this method, running time of center shall be reduce approximately of 33~50% time in graphs of more than 20k objects
+    :param process_output: to hold the multi process output
     :param node_list: list of nodes to run dijkstra on
     :param curr_graph: graph we work on
     :return: node_id, shortest_bet_longests
@@ -226,4 +235,4 @@ def multi_process_beat_thread(node_list: list, curr_graph):
             # edit our best node if and only if his longest path is shorter than the curr_node
             node_id = node
             shortest_bet_longests = node_longest_path
-    return node_id, shortest_bet_longests
+    process_output.append((node_id, shortest_bet_longests))

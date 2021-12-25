@@ -77,7 +77,17 @@ class TestGraphAlgo(TestCase):
         self.assertEqual(ans[0], w_ans)
 
     def test_tsp(self):
-        self.fail()
+        algo = GraphAlgo()
+        # algo.load_from_json(r'data/A0.json')
+        algo.load_from_json(r'data\A5.json')
+        for i in range(10000):
+            algo.get_graph().add_node(i)
+        all_nodes = algo.get_graph().get_all_v()
+        for node in all_nodes.keys():
+            for i in range(20):
+                algo.get_graph().add_edge(node, randint(0, 10000), randint(1, 22))
+        ans = algo.TSP([0, 1, 8, 3])
+        print(ans)
 
     def test_center_point(self):
         """
@@ -90,12 +100,12 @@ class TestGraphAlgo(TestCase):
                 2.2- not connected graph. for currect answer (None, float('inf'))
         """
         algo = GraphAlgo()
-
         # case 1.1
         algo.load_from_json(r'data\A5.json')
         ans = algo.centerPoint()
         self.assertEqual(ans[0], 40)
         self.assertEqual(ans[1], 9.291743173960954)
+
         # case 1.2
         algo.get_graph().remove_node(40)
         ans = algo.centerPoint()
@@ -112,6 +122,7 @@ class TestGraphAlgo(TestCase):
                 algo.get_graph().add_edge(node, randint(0, 1000), randint(1, 22))
         algo.centerPoint()
         self.assertEqual(algo.get_graph().v_size(), 1000)
+
         # case 2.2
         algo.get_graph().remove_node(40)
         algo.get_graph().add_node(40, (1, 1))

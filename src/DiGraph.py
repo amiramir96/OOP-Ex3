@@ -1,5 +1,4 @@
 import random
-
 from src import GraphInterface
 
 
@@ -65,8 +64,9 @@ class DiGraph(GraphInterface.GraphInterface):
         """
         all_node_dict = {}
         for dict_of_nodes in self.node_map.values():
-            for node in dict_of_nodes.items():
-                all_node_dict[node[0]] = node
+            all_node_dict = {**all_node_dict, **dict_of_nodes}
+            # for node in dict_of_nodes.items():
+            #     all_node_dict[node[0]] = node
         return all_node_dict
 
     def all_in_edges_of_node(self, id1: int) -> dict:

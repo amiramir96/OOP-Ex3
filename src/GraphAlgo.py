@@ -1,6 +1,5 @@
 import multiprocessing
 import sys
-from multiprocessing.queues import Queue
 from typing import List
 import json
 from src import GraphAlgoInterface, GraphInterface, DiGraph
@@ -38,9 +37,9 @@ def parents_list_helper(id1: int, id2: int, dist_map: dict, parents_map: dict):
         parents_list.insert(0, curr_node)
         curr_node = parents_map.get(curr_node % 1000)[curr_node]
 
-    if curr_node == id1:
+    if curr_node == id1 or curr_node == -1:
         # last parent is id1, found path
-        parents_list.insert(0, curr_node)
+        parents_list.insert(0, id1)
         return dist_map.get(key_transform(id2))[id2], parents_list
     else:
         # no existing path
@@ -66,6 +65,7 @@ def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents
             node_id = x
     return parents_list_helper(pivot_node, node_id, dist_map, parents_map)
 
+
 class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
     def __init__(self, *args):
@@ -88,6 +88,17 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         :return: the directed graph on which the algorithm works on.
         """
         return self.graph
+
+    def dijkstras_proccessing_handler(self, forward_node, backward_node):
+        return_dict = multiprocessing.Manager().dict()
+        forward_process = multiprocessing.Process(target=Dijkstra, args=(forward_node, self.get_graph(), return_dict))
+        backward_process = multiprocessing.Process(target=Dijkstra_transpose,
+                                                   args=(backward_node, self.get_graph(), return_dict))
+        forward_process.start()
+        backward_process.start()
+        forward_process.join()
+        backward_process.join()
+        return return_dict
 
     def is_connected_graph(self, src_node: int):
         """
@@ -232,13 +243,17 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         algorithm name - "double ganger":
             always compare between two sides of the road ^^
             phases:
-            loop over the list of nodes and:
-            1. first node will be compared between his out and in paths -> who have shorter path to one of the remaining nodes
-            2. any other iterate from now will compare between shortest path of in_edges of first list node to shortest path of out_edges of last list node
-            3. if there is node which we didnt set into the ans list means there is no exisiting path to / from him that can be summerize with all the others
+            first of all - add first node from the node_lst to the ans list
+            loop over len(remaining nodes) times and:
+            1. use dijkstra on the last node of the ans_list
+            2. use transpose_dijkstra on the first node of the ans_list
+            3. compare between outputs of 1 and 2, choose the shortest path to one of the remaining nodes
+            4. add the chosen path to ans_list
+            5. if we came into dead end (no ans to both dijkstras) - break and return (None, float('inf'))
+            6. return to point (1.)
+        note: if there is more than 3 diff strongly components in the graph and they r connected within one direction of edges - there is no ans absolutely
         """
         # dumb cases.. irrelevant
-        global forward_shortest, backward_shortest
         if len(node_lst) == 0:
             return None, float('inf')
         if len(node_lst) == 1:
@@ -246,89 +261,49 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
         # init vars:
         first_node = node_lst[0]
-        print("cities list: ", node_lst)
         remaining_list = node_lst.copy()
         remaining_list.pop(0)
-        print("remaining list: ", remaining_list)
         ans_list = [first_node]
         total_distance = 0
-        print("ans list: ", ans_list, "curr dist: ", total_distance)
-        # remaining list
-        # ans list
-        # define multiproccessing "process_in", "process_out"
-        # save temporary dicts for in, out dijkstra dist_map and prev_map
-        additive_flag = True  # flag to know if we added last time in the end or start
-        # credit to https://stackoverflow.com/questions/54615502/getting-the-return-value-of-a-function-used-in-multiprocess
-        # gave us clue how to get input for multiprocess func
-        my_second_multi_processing = []
-        forward_output = []
-        backward_output = [0]
-        q = multiprocessing.Manager()
-        return_dict = q.dict()
-        forward_process = multiprocessing.Process(target=Dijkstra, args=(first_node, self.get_graph(), return_dict))
-        backward_process = multiprocessing.Process(target=Dijkstra_transpose, args=(first_node, self.get_graph(), return_dict))
-        my_second_multi_processing.append(forward_process)
-        my_second_multi_processing.append(backward_process)
-        my_second_multi_processing[0].start()
-        my_second_multi_processing[1].start()
-        for x in my_second_multi_processing:
-            x.join()
-        print(return_dict.keys())
-        backward_output = return_dict[0]
-        forward_output = return_dict[1]
 
-        # first phase - check out_edge vs in_edges of first nodes with dijkstra + multi_proccess
-        dij_maps = Dijkstra(first_node, self.get_graph())
-        forward_shortest = nearest_neighbour(first_node, remaining_list, dij_maps[0], dij_maps[1])
-        trans_dij_maps = Dijkstra_transpose(first_node, self.get_graph())
-        backward_shortest = nearest_neighbour(first_node, remaining_list, trans_dij_maps[0], trans_dij_maps[1])
-        print("forward tup: ", forward_shortest)
-        print("backward tup: ", backward_shortest)
-        if forward_shortest[0] > backward_shortest[0]:
-            backward_shortest[1].pop(0)
-            ans_list = backward_shortest[1].reverse() + ans_list
-            total_distance = total_distance + backward_shortest[0]
-            remaining_list.remove(backward_shortest[1][0])
-        else:
-            forward_shortest[1].pop(0)
-            ans_list = ans_list + forward_shortest[1]
-            total_distance = total_distance + forward_shortest[0]
-            remaining_list.remove(forward_shortest[1][0])
-
-        print()
-        print("before loop:")
-        print("remaining list:", remaining_list)
-        print("forward tup:", forward_shortest)
-        print("backward tup:", backward_shortest)
-        print("anslist: ", ans_list)
-        print()
-        # 2nd phase - always keep one dijkstra output and drop one, and calculate dijkstra for that node
+        # start loop
         leng = len(remaining_list)
         for i in range(leng):
+            # phase 1
+            # return_dict = self.dijkstras_proccessing_handler(ans_list[len(ans_list) - 1], ans_list[0])
+            return_dict1 = Dijkstra(ans_list[len(ans_list) - 1], self.get_graph())
+            # phase 2
+            return_dict2 = Dijkstra_transpose(ans_list[0], self.get_graph())
 
-            dij_maps = Dijkstra(ans_list[len(ans_list)-1], self.get_graph())
-            forward_shortest = nearest_neighbour(ans_list[len(ans_list)-1], remaining_list, dij_maps[0], dij_maps[1])
+            forward_shortest = nearest_neighbour(ans_list[len(ans_list) - 1], remaining_list, return_dict1[0],
+                                                 return_dict1[1])
+            backward_shortest = nearest_neighbour(ans_list[0], remaining_list, return_dict2[0], return_dict2[1])
 
-            trans_dij_maps = Dijkstra_transpose(ans_list[0], self.get_graph())
-            backward_shortest = nearest_neighbour(ans_list[0], remaining_list, trans_dij_maps[0], trans_dij_maps[1])
-            print("iterate i:", i)
-            print("forward tup:", forward_shortest)
-            print("backward tup:", backward_shortest)
-
+            # phase 3
             if forward_shortest[0] > backward_shortest[0]:
+                if backward_shortest[1] == []:
+                    # option to go output point 5.
+                    break
+                # phase 4
                 backward_shortest[1].remove(backward_shortest[1][0])
                 backward_shortest[1].reverse()
                 remaining_list.remove(backward_shortest[1][0])
                 ans_list = backward_shortest[1] + ans_list
                 total_distance = total_distance + backward_shortest[0]
+
             else:
+                if forward_shortest[1] == []:
+                    # option to go output point 5.
+                    break
+                # phase 4
                 forward_shortest[1].pop(0)
-                remaining_list.remove(forward_shortest[1][len(forward_shortest[1])-1])
+                remaining_list.remove(forward_shortest[1][len(forward_shortest[1]) - 1])
                 ans_list = ans_list + forward_shortest[1]
                 total_distance = total_distance + forward_shortest[0]
 
         # check if remaining list is empty (other wise - no solution)
         if len(remaining_list) > 0:
+            # point (5.) activated - no ans :/
             return None, float('inf')
         else:
             return ans_list, total_distance
@@ -359,7 +334,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             longest_bet_shortest = float('inf')
             ans_node = -1
 
-            if self.get_graph().e_size() + self.get_graph().v_size() > 20000 and multiprocessing.cpu_count() > 2:
+            if self.get_graph().e_size() + self.get_graph().v_size() > 5000 and multiprocessing.cpu_count() > 2:
                 # gonna use multi peocessing, split nodes between
                 core_allocate = multiprocessing.cpu_count() - 1  # keep one core outside the game - ensure pc wont die
                 list_list_nodes = []  # gonna work 2D
@@ -378,7 +353,8 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
                 process_output = multiprocessing.Manager().list()
                 for listt in list_list_nodes:
                     my_first_multi_processing.append( \
-                        multiprocessing.Process(target=multi_process_beat_thread, args=(listt, self.get_graph(), process_output)))
+                        multiprocessing.Process(target=multi_process_beat_thread,
+                                                args=(listt, self.get_graph(), process_output)))
 
                 for p in my_first_multi_processing:
                     p.start()

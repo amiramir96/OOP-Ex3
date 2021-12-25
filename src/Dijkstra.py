@@ -132,8 +132,8 @@ def Dijkstra(src_node: int, curr_graph, process_output=None):
                     prev_map.get(key_transform(dest_node))[dest_node] = curr_node  # curr_node is the father
                     min_heap.put(dest_node)  # put in heap
     if process_output is not None:  # support multi processing of TSP
-        process_output[0] = (dist_map, prev_map, visit_map)
-        return 1
+        process_output = (dist_map, prev_map, visit_map)
+        return process_output
 
     return dist_map, prev_map, visit_map
 
@@ -197,8 +197,8 @@ def Dijkstra_transpose(src_node: int, curr_graph, process_output=None):
                     prev_map.get(key_transform(dest_node))[dest_node] = curr_node  # curr_node is the father
                     min_heap.put(dest_node)  # put in heap
     if process_output is not None:  # support multi processing of TSP
-        process_output[1] = (dist_map, prev_map, visit_map)
-        return 1
+        process_output = (dist_map, prev_map, visit_map)
+        return process_output
 
     return dist_map, prev_map, visit_map
 
@@ -215,12 +215,12 @@ def longest_road(dist_map):
     return max_dist
 
 
-def multi_process_beat_thread(node_list: list, curr_graph, process_output: list):
+def multi_process_beat_thread(node_list: list, curr_graph, process_output):
     """
     meanwhile center function from graphAlgo
     for graph with alot of objects, we would like to split between all the pc cores the dijkstra cals
     with using this method, running time of center shall be reduce approximately of 33~50% time in graphs of more than 20k objects
-    :param process_output: to hold the multi process output
+    :param process_output: # support multi process, will hold the output
     :param node_list: list of nodes to run dijkstra on
     :param curr_graph: graph we work on
     :return: node_id, shortest_bet_longests

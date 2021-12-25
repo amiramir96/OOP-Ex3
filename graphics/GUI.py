@@ -43,8 +43,16 @@ def draw_arrow(p1: tuple, p2: tuple, color: (int, int, int) = (0, 0, 0), radius:
     x1, y1, x2, y2 = p1[0], p1[1], p2[0], p2[1]
     # where the triangle cuts the line
     triangle_cut_point = (x1 + 0.9 * (x2-x1), y1 + 0.9 * (y2-y1))
-    inverse_line_slop = -1 / ((y2-y1)/(x2-x1))
-    x, y = a_b_given_c_m(radius/2, inverse_line_slop)
+    # extreme case: slope is infinity or zero
+    if x1 == x2:  # if the line is vertical, the arrow base will be horizontal
+        x = radius / 2
+        y = 0
+    elif y1 == y2:
+        x = 0
+        y = radius / 2
+    else:  # calculate the points of the arrow base for a base length of r
+        inverse_line_slop = -1 / ((y2-y1)/(x2-x1))
+        x, y = a_b_given_c_m(radius/2, inverse_line_slop)
     triangle_point1 = (triangle_cut_point[0] + x, triangle_cut_point[1] + y)
     triangle_point2 = (triangle_cut_point[0] - x, triangle_cut_point[1] - y)
     # draw line
@@ -113,5 +121,5 @@ def plot(g: GraphAlgoInterface):
 
 if __name__ == '__main__':
     g = GraphAlgo()
-    g.load_from_json('data\\A1.json')
+    g.load_from_json('data\\square.json')
     plot(g)

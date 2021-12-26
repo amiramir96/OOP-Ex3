@@ -19,10 +19,10 @@ class TestGraphAlgo(TestCase):
         self.assertEqual(algo.get_graph(), None)
 
         # case 2
-        algo.load_from_json(r'A4.json')
+        algo.load_from_json(r'data\A4.json')
         self.assertEqual(algo.get_graph().v_size(), 40)
         self.assertEqual(algo.get_graph().e_size(), 102)
-        algo = GraphAlgo(r'A4.json')
+        algo = GraphAlgo(r'data\A4.json')
         self.assertEqual(algo.get_graph().v_size(), 40)
         self.assertEqual(algo.get_graph().e_size(), 102)
 
@@ -38,12 +38,12 @@ class TestGraphAlgo(TestCase):
 
     def test_load_from_json(self):
         algo = GraphAlgo()
-        algo.load_from_json(r'A4.json')
+        algo.load_from_json(r'data\A4.json')
         self.assertEqual(40, algo.get_graph().v_size())
 
     def test_save_to_json(self):
         algo = GraphAlgo()
-        algo.load_from_json(r'A4.json')
+        algo.load_from_json(r'data\A4.json')
         algo.save_to_json('saved_graph.json')
         algo.load_from_json('saved_graph.json')
         self.assertEqual(40, algo.get_graph().v_size())
@@ -56,12 +56,12 @@ class TestGraphAlgo(TestCase):
         """
         algo = GraphAlgo()
         # case 1:
-        algo.load_from_json(r'A0.json')
+        algo.load_from_json(r'data\A0.json')
         ans = algo.shortest_path(8, 3)
         w_ans = 7.282598961846713
         self.assertEqual(ans[0], w_ans)
         # case 2:
-        algo.load_from_json(r'A4.json')
+        algo.load_from_json(r'data\A4.json')
         ans = algo.shortest_path(0, 5)
         w_ans = 6.834625309281369
         self.assertEqual(ans[0], w_ans)
@@ -88,11 +88,11 @@ class TestGraphAlgo(TestCase):
         """
         algo = GraphAlgo()
         # case 1
-        algo.load_from_json(r'A0.json')
+        algo.load_from_json(r'data\A0.json')
         ans = algo.TSP([0, 9, 3])
         self.assertEqual([9, 10, 0, 1, 2, 3], ans[0])
         # case 2
-        algo.load_from_json(r'A5.json')
+        algo.load_from_json(r'data\A5.json')
         ans = algo.TSP([0, 11, 41, 23, 32, 12, 7, 3, 35, 39])
         self.assertEqual([0, 8, 7, 11, 12, 3, 13, 14, 15, 39, 40, 41, 40, 39, 38, 37, 36, 35, 36, 31, 23, 31, 32] , ans[0])
         # case 3
@@ -125,7 +125,7 @@ class TestGraphAlgo(TestCase):
         """
         algo = GraphAlgo()
         # case 1.1
-        algo.load_from_json(r'A5.json')
+        algo.load_from_json(r'data/A5.json')
         ans = algo.centerPoint()
         self.assertEqual(ans[0], 40)
         self.assertEqual(ans[1], 9.291743173960954)

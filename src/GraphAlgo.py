@@ -52,6 +52,7 @@ def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents
     """
     look for shortest neighbour from the list at the dist_map that got output from dijkstra
     than return dist_between_node, list_path
+    :param exception_nodes: nodes which forbidden to choose as the "nearest neighbour" of the remaining list
     :param neighbours: all the relevant nodes to be checken
     :param dist_map:
     :param pivot_node: src_node

@@ -57,12 +57,12 @@ def regular_test(nodes: int):
 
     # save_graph
     start = time.time()
-    algo.save_to_json('data\\saved_graph.json')
+    algo.save_to_json(r'saved_graph.json')
     end = time.time()
     print("save_graph time:", end - start, "seconds")
 
     # load_graph
     start = time.time()
-    algo.load_from_json('data\\saved_graph.json')
+    algo.load_from_json(r'saved_graph.json')
     end = time.time()
     print("load_graph time:", end - start, "seconds")

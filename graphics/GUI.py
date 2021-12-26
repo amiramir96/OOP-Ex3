@@ -148,7 +148,7 @@ def plot(g: GraphAlgoInterface):
             y = scale(y, margin, screen.get_height() - 3*margin, min_y, max_y)
             # pygame.draw.circle(screen, pygame.Color(63, 72, 204), (x, y), r)
             # draw edges
-            for edge in g.get_graph().all_out_edges_of_node(node[0]).values():
+            for edge in g.get_graph().all_out_edges_of_node(node[0]).items():
                 color = (0, 0, 0)
                 if (node_id, g.get_graph().get_all_v()[edge[0]][0]) in color_edges:
                     color = (0, 162, 232)
@@ -168,7 +168,7 @@ def plot(g: GraphAlgoInterface):
             y = scale(y, margin, screen.get_height() - 3*margin, min_y, max_y)
             # pygame.draw.circle(screen, pygame.Color(63, 72, 204), (x, y), r)
             # draw edges
-            for edge in g.get_graph().all_out_edges_of_node(node[0]).values():
+            for edge in g.get_graph().all_out_edges_of_node(node[0]).items():
                 if (node_id, g.get_graph().get_all_v()[edge[0]][0]) in color_edges:
                     color = (0, 162, 232)
                     dest_x = g.get_graph().get_all_v()[edge[0]][1][0]

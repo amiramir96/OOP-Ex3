@@ -153,6 +153,6 @@ class TestGraphAlgo(TestCase):
         self.assertEqual(ans[0], None)
 
     def test_plot_graph(self):
-        g = GraphAlgo('data\\A1.json')
+        g = GraphAlgo('data/A0.json')
         g.plot_graph()
 

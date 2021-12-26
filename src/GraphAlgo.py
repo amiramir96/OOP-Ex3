@@ -142,9 +142,9 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             # replace last occurrence of src
             # see: https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
             curr_path = curr_path.rsplit('src', 1)[0]
-        # if curr_path[-11:] == 'correctness':
-        #     # replace last occurrence of tests
-        #     curr_path = curr_path.rsplit('tests\\correctness', 1)[0]
+        if curr_path[-11:] == 'correctness':
+            # replace last occurrence of tests
+            curr_path = curr_path.rsplit('tests\\correctness', 1)[0]
         if curr_path[-8:] == 'graphics':
             curr_path = curr_path.rsplit('graphics', 1)[0]
         if curr_path[-1:] != '\\':

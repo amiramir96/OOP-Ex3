@@ -48,9 +48,14 @@ def regular_test(nodes: int):
         print("TSP time:", shortest_path_time*20*2)  # tsp_list input * 2 * dijkstra times
     else:
         tsp_list = []
-        for i in range(20):
-            tsp_list.append(randint(0, nodes-1))
+        i = 0
+        while i < 20 and curr_graph.v_size() > 20:
+            x = randint(0, nodes-1)
+            if x not in tsp_list:
+                i = i+1
+                tsp_list.append(x)
         start = time.time()
+        print(tsp_list)
         algo.TSP(tsp_list)
         end = time.time()
         print("TSP time:", end - start, "seconds")

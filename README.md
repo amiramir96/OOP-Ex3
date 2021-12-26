@@ -27,17 +27,22 @@ for compare test please ENSURE that u downloaded the whole tests folder and extr
 <br>
 
 ## graphics - GUI  אורי טיפולך
+The program includes an easy-to-use Graphic User Interface for performing basic tasks on the graph.  
+The GUI allows for discovering information about the graph, you can find the center node of the graph (the node with the minimal maximum distance with the other nodes)  
+you can find the shortest path between two nodes  
+you can find the (almost) best route throgh multiple nodes
 
-
----------------------<br>
-אורי טיפולך
----------------------<br>
-
-### logic system אורי טיפולך
-
+### Running The Simulation אורי טיפולך
+To run the GUI import the project and run `python Ex3.py <graph path>` in the comand line at the primary folder.  
+For Example:  `python Ex3.py data/A2.json` will give you the following window:  
+TODO add image
 
 ### how to use / tutorial אורי טיפולך
+To find the center of the grph, press the `center` button. The center node wil turn green, and the min-mx distance will be shown o the button.  
+the find the shortest path between 2 node chose the nodes by clicking on them, then press `shortest path`. the shortest path will be marked and the distance will be showen on the button.  
+The same goes for `TSP` (shortest path covering multiple nodes), chose your nodes and press the button.
 
+The reset button is used to reset the GUI, you you misclicked or want to check something else just click it and start over.
 
 ## Download
 
@@ -45,7 +50,7 @@ for compare test please ENSURE that u downloaded the whole tests folder and extr
 אורי טיפולך
 ---------------------<br>
 
-## Running The Simulation
+## 
 ---------------------<br>
 אורי טיפולך
 ---------------------<br>

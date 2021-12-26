@@ -71,6 +71,8 @@ def plot(g: GraphAlgoInterface):
     center_point_button.set_click_listener('center_point')
     shortest_path_button = Button("SHORTEST PATH")
     shortest_path_button.set_click_listener('shortest_path')
+    tsp_button = Button("TSP")
+    tsp_button.set_click_listener('TSP')
     reset_button = Button("RESET")
 
     chosen_nodes = []
@@ -95,6 +97,15 @@ def plot(g: GraphAlgoInterface):
                     chosen_nodes = []
                     shortest_path_button.action(shortest_path_button)
 
+            if tsp_button.check(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
+                if len(chosen_nodes) >= 2:
+                    path_nodes = tsp_button.action(g, tsp_button, chosen_nodes)
+                    for i in range(len(path_nodes)-1):
+                        color_edges.append((path_nodes[i], path_nodes[i+1]))
+                else:  # reset
+                    chosen_nodes = []
+                    tsp_button.action(tsp_button)
+
             # reset
             if reset_button.check(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 chosen_nodes = []
@@ -102,6 +113,7 @@ def plot(g: GraphAlgoInterface):
                 color_edges = []
                 center_point_button.reset()
                 shortest_path_button.reset()
+                tsp_button.reset()
 
 
         screen.fill(pygame.Color(239, 228, 176))
@@ -176,6 +188,7 @@ def plot(g: GraphAlgoInterface):
         center_point_button.render(screen, (margin/5, margin/5), (margin*4, margin*1.5))
         reset_button.render(screen, (screen.get_width()-margin/5-margin*4, margin/5), (margin*4, margin*1.5))
         shortest_path_button.render(screen, (2*(margin/5) + margin*4, margin/5), (margin*4, margin*1.5))
+        tsp_button.render(screen, (3*(margin/5) + margin*8, margin/5), (margin*4, margin*1.5))
 
         pygame.display.update()
         clock.tick(60)

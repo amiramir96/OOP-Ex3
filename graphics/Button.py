@@ -19,6 +19,8 @@ class Button:
             self.action = center_point_action
         if func_name == 'shortest_path':
             self.action = shortest_path_action
+        if func_name == 'TSP':
+            self.action = tsp_action
 
     def render(self, surface: pygame.surface,  pos: (int, int), size: (int, int)):
         self.rect.topleft = pos
@@ -70,3 +72,19 @@ def shortest_path_action(*args):
         b.color = (200, 200, 30)
         return path[1]
 
+
+def tsp_action(*args):
+    if len(args) == 1:
+        b = args[0]
+        b.title = "Choose Nodes First"
+        b.color = (185, 122, 87)
+        b.activated = True
+
+    else:
+        g, b, nodes = args
+        b.title = "Loading..."
+        path = g.TSP(nodes)
+        b.activated = True
+        b.title = "Distance: " + "{:.3f}".format(path[1])
+        b.color = (200, 200, 30)
+        return path[0]

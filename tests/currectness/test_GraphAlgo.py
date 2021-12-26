@@ -106,7 +106,7 @@ class TestGraphAlgo(TestCase):
         # case 5
         algo.get_graph().add_node(555, (11, 11))
         algo.get_graph().add_edge(555, 0, 2.5)
-        ans = algo.TSP([555,34,47,8])
+        ans = algo.TSP([555, 34, 47, 8])
         # case 6
         self.assertEqual(None, ans[0])
         algo.get_graph().remove_node(40)

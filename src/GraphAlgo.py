@@ -46,7 +46,7 @@ def parents_list_helper(id1: int, id2: int, dist_map: dict, parents_map: dict):
         return float('inf'), []
 
 
-def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents_map: dict):
+def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents_map: dict, exception_nodes=[]):
     """
     look for shortest neighbour from the list at the dist_map that got output from dijkstra
     than return dist_between_node, list_path
@@ -60,7 +60,7 @@ def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents
     node_id = -1
     for x in neighbours:
         # iterate over all the neighbours and take the one with minimal distance from pivot_node
-        if min_dist > dist_map.get(x % 1000)[x % 1000]:
+        if min_dist > dist_map.get(x % 1000)[x % 1000] and x not in exception_nodes:
             min_dist = dist_map.get(x % 1000)[x % 1000]
             node_id = x
     return parents_list_helper(pivot_node, node_id, dist_map, parents_map)
@@ -266,14 +266,20 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         ans_list = [first_node]
         total_distance = 0
 
+        flag = -1
+        exception_nodes = []
         # start loop
         leng = len(remaining_list)
         for i in range(leng):
-            # phase 1
+            # phase 1,2
+            if flag == 1:
+                return_dict1 = Dijkstra(ans_list[len(ans_list) - 1], self.get_graph())
+            elif flag == 0:
+                return_dict2 = Dijkstra_transpose(ans_list[0], self.get_graph())
+            else:
+                return_dict1 = Dijkstra(ans_list[len(ans_list) - 1], self.get_graph())
+                return_dict2 = Dijkstra_transpose(ans_list[0], self.get_graph())
             # return_dict = self.dijkstras_proccessing_handler(ans_list[len(ans_list) - 1], ans_list[0])
-            return_dict1 = Dijkstra(ans_list[len(ans_list) - 1], self.get_graph())
-            # phase 2
-            return_dict2 = Dijkstra_transpose(ans_list[0], self.get_graph())
 
             forward_shortest = nearest_neighbour(ans_list[len(ans_list) - 1], remaining_list, return_dict1[0],
                                                  return_dict1[1])
@@ -285,21 +291,34 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
                     # option to go output point 5.
                     break
                 # phase 4
-                backward_shortest[1].remove(backward_shortest[1][0])
+                backward_shortest[1].pop(0)
                 backward_shortest[1].reverse()
                 remaining_list.remove(backward_shortest[1][0])
                 ans_list = backward_shortest[1] + ans_list
                 total_distance = total_distance + backward_shortest[0]
 
+                # process to avoid from double dijkstra for every iteration - implemantation issue
+                if flag == 1:
+                    exception_nodes = [ans_list[0]]
+                else:
+                    exception_nodes.append(ans_list[0])
+                flag = 0
             else:
                 if forward_shortest[1] == []:
                     # option to go output point 5.
                     break
                 # phase 4
-                forward_shortest[1].pop(0)
                 remaining_list.remove(forward_shortest[1][len(forward_shortest[1]) - 1])
+                forward_shortest[1].pop(0)
                 ans_list = ans_list + forward_shortest[1]
                 total_distance = total_distance + forward_shortest[0]
+
+                # process to avoid from double dijkstra for every iteration - implemantation issue
+                if flag == 0:
+                    exception_nodes = [ans_list[len(ans_list) - 1]]
+                else:
+                    exception_nodes.append(ans_list[len(ans_list)-1])
+                flag = 1
 
         # check if remaining list is empty (other wise - no solution)
         if len(remaining_list) > 0:

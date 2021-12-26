@@ -29,7 +29,7 @@ def regular_test(nodes: int):
 
     # center
     start = time.time()
-    algo.shortest_path(randint(0, nodes), randint(0, nodes))
+    algo.shortest_path(randint(0, nodes-1), randint(0, nodes-1))
     end = time.time()
     shortest_path_time = end - start
     if curr_graph.e_size() + curr_graph.v_size() > 250000:
@@ -49,7 +49,7 @@ def regular_test(nodes: int):
     else:
         tsp_list = []
         for i in range(20):
-            tsp_list.append(randint(0, nodes))
+            tsp_list.append(randint(0, nodes-1))
         algo.TSP(tsp_list)
         end = time.time()
         print("TSP time:", end - start, "seconds")

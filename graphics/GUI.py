@@ -128,7 +128,7 @@ def plot(g: GraphAlgoInterface):
             x, y = node[1][0], node[1][1]
             # scale position according to screen
             x = scale(x, margin, screen.get_width() - margin, min_x, max_x)
-            y = scale(y, 3 * margin, screen.get_height() - margin, min_y, max_y)
+            y = scale(y, margin, screen.get_height() - 3*margin, min_y, max_y)
             node_circle = pygame.Rect((x - r, y - r), (2 * r, 2 * r))
             if node_circle.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
                 if node_id not in chosen_nodes:
@@ -145,7 +145,7 @@ def plot(g: GraphAlgoInterface):
             x, y = node[1][0], node[1][1]
             # scale position according to screen
             x = scale(x, margin, screen.get_width() - margin, min_x, max_x)
-            y = scale(y, 3 * margin, screen.get_height() - margin, min_y, max_y)
+            y = scale(y, margin, screen.get_height() - 3*margin, min_y, max_y)
             # pygame.draw.circle(screen, pygame.Color(63, 72, 204), (x, y), r)
             # draw edges
             for edge in g.get_graph().all_out_edges_of_node(node[0]).values():
@@ -155,7 +155,7 @@ def plot(g: GraphAlgoInterface):
                 dest_x = g.get_graph().get_all_v()[edge[0]][1][0]
                 dest_y = g.get_graph().get_all_v()[edge[0]][1][1]
                 dest_x = scale(dest_x, margin, screen.get_width() - margin, min_x, max_x)
-                dest_y = scale(dest_y, 3 * margin, screen.get_height() - margin, min_y, max_y)
+                dest_y = scale(dest_y, margin, screen.get_height() - 3*margin, min_y, max_y)
                 # pygame.draw.line(screen, pygame.Color(0,0,0),(x,y),(dest_x,dest_y),4)
                 draw_arrow(screen, (x, y), (dest_x, dest_y), color, radius=r)
 
@@ -165,7 +165,7 @@ def plot(g: GraphAlgoInterface):
             x, y = node[1][0], node[1][1]
             # scale position according to screen
             x = scale(x, margin, screen.get_width() - margin, min_x, max_x)
-            y = scale(y, 3 * margin, screen.get_height() - margin, min_y, max_y)
+            y = scale(y, margin, screen.get_height() - 3*margin, min_y, max_y)
             # pygame.draw.circle(screen, pygame.Color(63, 72, 204), (x, y), r)
             # draw edges
             for edge in g.get_graph().all_out_edges_of_node(node[0]).values():
@@ -174,16 +174,19 @@ def plot(g: GraphAlgoInterface):
                     dest_x = g.get_graph().get_all_v()[edge[0]][1][0]
                     dest_y = g.get_graph().get_all_v()[edge[0]][1][1]
                     dest_x = scale(dest_x, margin, screen.get_width() - margin, min_x, max_x)
-                    dest_y = scale(dest_y, 3 * margin, screen.get_height() - margin, min_y, max_y)
+                    dest_y = scale(dest_y, margin, screen.get_height() - 3*margin, min_y, max_y)
                     # pygame.draw.line(screen, pygame.Color(0,0,0),(x,y),(dest_x,dest_y),4)
                     draw_arrow(screen, (x, y), (dest_x, dest_y), color, radius=r)
 
         # draw buttons
-        center_point_button.render(screen, (margin / 5, margin / 5), (margin * 4, margin * 1.5))
-        reset_button.render(screen, (screen.get_width() - margin / 5 - margin * 4, margin / 5),
-                            (margin * 4, margin * 1.5))
-        shortest_path_button.render(screen, (2 * (margin / 5) + margin * 4, margin / 5), (margin * 4, margin * 1.5))
-        tsp_button.render(screen, (3 * (margin / 5) + margin * 8, margin / 5), (margin * 4, margin * 1.5))
+        center_point_button.render(screen, (margin / 5, screen.get_height() - margin*1.5 - margin/5),
+                                   (margin*4, margin*1.5))
+        reset_button.render(screen, (screen.get_width() - margin / 5 - margin * 4,
+                                     screen.get_height() - margin*1.5 - margin/5), (margin * 4, margin * 1.5))
+        shortest_path_button.render(screen, (2 * (margin / 5) + margin * 4, screen.get_height() - margin*1.5 - margin/5),
+                                    (margin * 4, margin * 1.5))
+        tsp_button.render(screen, (3 * (margin / 5) + margin * 8, screen.get_height() - margin*1.5 - margin/5),
+                          (margin * 4, margin * 1.5))
 
         pygame.display.update()
         clock.tick(60)

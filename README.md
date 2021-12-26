@@ -35,7 +35,7 @@ you can find the (almost) best route throgh multiple nodes
 ### Running The Simulation אורי טיפולך
 To run the GUI import the project and run `python Ex3.py <graph path>` in the comand line at the primary folder.  
 For Example:  `python Ex3.py data/A2.json` will give you the following window:  
-TODO add image
+https://github.com/amiramir96/OOP-Ex3/blob/a7924036eedf118aa5675a03afb6547a124e51a8/wiki%20images/GUI_sample.jpg
 
 ### how to use / tutorial אורי טיפולך
 To find the center of the grph, press the `center` button. The center node wil turn green, and the min-mx distance will be shown o the button.  
@@ -43,17 +43,6 @@ the find the shortest path between 2 node chose the nodes by clicking on them, t
 The same goes for `TSP` (shortest path covering multiple nodes), chose your nodes and press the button.
 
 The reset button is used to reset the GUI, you you misclicked or want to check something else just click it and start over.
-
-## Download
-
----------------------<br>
-אורי טיפולך
----------------------<br>
-
-## 
----------------------<br>
-אורי טיפולך
----------------------<br>
 
 ## Running Time Results
 <br>

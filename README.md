@@ -23,6 +23,8 @@ It can be called from the cmd or be given the number of nodes for the graph.
 `Python3 PerformanceTest.py`, if u would like to see the comparasion test agains the java project, input 0 in place of natural number.  
 Unless u input "0" for the compare test, The program will create a random graph with the specified number of nodes in the folder and test the elapsed time of multiple implemented methods on that graph.
 <br>
+for compare test please ENSURE that u downloaded the whole tests folder and extracted inside the performance folder the 100Kperforamnce.zip file (for the 100K.json graph)
+<br>
 
 ## graphics - GUI  אורי טיפולך
 

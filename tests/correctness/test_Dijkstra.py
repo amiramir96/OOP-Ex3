@@ -38,7 +38,8 @@ class Test(TestCase):
         # case 5:
         listn = [1, 2, 3, 4, 8, 56456]  # check multi process and in same time
         # ensure that if one of the list nodes is not exist nothing will get bomb
-        ans = multi_process_beat_thread(listn, algo.get_graph())
+        ans = []
+        multi_process_beat_thread(listn, algo.get_graph(), ans)
         # (8, 10.660789474757282)
-        self.assertEqual(ans[0], 8)
-        self.assertEqual(ans[1], 10.660789474757282)
+        self.assertEqual(ans[0][0], 8)
+        self.assertEqual(ans[0][1], 10.660789474757282)

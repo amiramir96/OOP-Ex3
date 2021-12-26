@@ -76,7 +76,7 @@ def shortest_path_action(*args):
 def tsp_action(*args):
     if len(args) == 1:
         b = args[0]
-        b.title = "Choose Nodes First"
+        b.title = "Choose 2+ Nodes First"
         b.color = (185, 122, 87)
         b.activated = True
 

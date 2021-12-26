@@ -15,12 +15,12 @@ the project splits to packges: src (for graph and algorithm files), graphics, te
 |-----------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **src**         |    interfaces of graph, graph algorithms, graph class, graph algorithm class                                                                             
 |  **graphics**   |    represent all the GUI classes, with constructing the Window class, the GUI gets open for the user usage, based on pygames                              |
-| **Tests**       |   2 categories - 1) Currectness: test each of the public class methods to return currect answer, 2) RunningTime - represented in the file "performance_test.py" | 
+| **Tests**       |   2 categories - 1) Currectness: test each of the public class methods to return currect answer, 2) RunningTime - represented in the file "perform_test.py" | 
 
 ## Tests
 The "performance_test.py" file is used to test the performaence of the algorithm on graphs with different sizes and for easy comparasion to the results from the prev assigment.  
 It can be called from the cmd or be given the number of nodes for the graph.  
-`Python3 PerformanceTest.py`, if u would like to see the comparasion test agains the java project, input 0 in place of natural number.  
+`py perform_test.py`, if u would like to see the comparasion test agains the java project, input 0 in place of natural number.  
 Unless u input "0" for the compare test, The program will create a random graph with the specified number of nodes in the folder and test the elapsed time of multiple implemented methods on that graph.
 <br>
 for compare test please ENSURE that u downloaded the whole tests folder and extracted inside the performance folder the 100Kperforamnce.zip file (for the 100K.json graph)
@@ -47,10 +47,9 @@ The reset button is used to reset the GUI, you you misclicked or want to check s
 
 ## Running Time Results
 <br>
+here is a table for RUNNING TIME of graphs with 100, 1000, 10000, 100K, 1M nodes (and 20 out edges for ea node in avg) <br>
 
----------------------<br>
-אחריות אמיר
----------------------<br>
+for comparasion results between java and python implementation click here: https://github.com/amiramir96/OOP-Ex3/wiki <br>
 
 |**Node_size**|**Edge_size**|**construct graph**|**isConnected**   |**shortestPath**  | **shortestPathDist** |  **center**         | **tsp for 20 nodes** |
 |-------------|-------------|-------------------|------------------|------------------|----------------------|---------------------|----------------------|

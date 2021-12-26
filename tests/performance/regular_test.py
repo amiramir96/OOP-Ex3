@@ -50,6 +50,7 @@ def regular_test(nodes: int):
         tsp_list = []
         for i in range(20):
             tsp_list.append(randint(0, nodes-1))
+        start = time.time()
         algo.TSP(tsp_list)
         end = time.time()
         print("TSP time:", end - start, "seconds")

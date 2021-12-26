@@ -76,7 +76,7 @@ class DiGraph(GraphInterface.GraphInterface):
         in_edges_dict = {}
         if id1 in self.edge_in_map.get(key_transform(id1)):
             for edge in self.edge_in_map.get(key_transform(id1)).get(id1).items():
-                in_edges_dict[edge[0]] = edge
+                in_edges_dict[edge[0]] = edge[1]
         return in_edges_dict
 
     def all_out_edges_of_node(self, id1: int) -> dict:
@@ -86,7 +86,7 @@ class DiGraph(GraphInterface.GraphInterface):
         out_edges_dict = {}
         if id1 in self.edge_out_map.get(key_transform(id1)):
             for edge in self.edge_out_map.get(key_transform(id1)).get(id1).items():
-                out_edges_dict[edge[0]] = edge
+                out_edges_dict[edge[0]] = edge[1]
         return out_edges_dict
 
     def get_mc(self) -> int:
@@ -233,8 +233,15 @@ class DiGraph(GraphInterface.GraphInterface):
         self.edge_size = self.edge_size - 1
         return True
 
+    def __repr__(self):
+        print_dict = {}
+        all_nodes = self.get_all_v()
+        for node in all_nodes.keys():
+            x = {node: (self.all_out_edges_of_node(node), len(self.all_out_edges_of_node(node).keys()),
+                        self.all_in_edges_of_node(node), len(self.all_in_edges_of_node(node)))}
+            print_dict[node] = x
+        return str(print_dict)
 
-#
 # def run():
 #     g = DiGraph()
 #     print(g.mc)

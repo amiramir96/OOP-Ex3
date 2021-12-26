@@ -39,7 +39,7 @@ def parents_list_helper(id1: int, id2: int, dist_map: dict, parents_map: dict):
         parents_list.insert(0, curr_node)
         curr_node = parents_map.get(curr_node % 1000)[curr_node]
 
-    if curr_node == id1 or curr_node == -1:
+    if (curr_node == id1 or curr_node == -1) and dist_map.get(key_transform(id2))[id2] < float('inf'):
         # last parent is id1, found path
         parents_list.insert(0, id1)
         return dist_map.get(key_transform(id2))[id2], parents_list

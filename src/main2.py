@@ -76,7 +76,7 @@ def check2():
       """
     print('check 2:')
     g_algo = GraphAlgo()
-    file = '../data/A5.json'
+    file = '../tests/correctness/A5.json'
     g_algo.load_from_json(file)
     g_algo.get_graph().remove_edge(13, 14)
     g_algo.save_to_json(file + "_edited")

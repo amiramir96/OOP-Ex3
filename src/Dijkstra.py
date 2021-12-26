@@ -120,7 +120,7 @@ def Dijkstra(src_node: int, curr_graph, process_output=None):
         # loop over all his OUT edges
         if out_edges is not None:
 
-            for edge in out_edges.values():
+            for edge in out_edges.items():
                 dest_node = edge[0]  # save as var the destination node of the edge
                 if visit_map.get(key_transform(dest_node))[dest_node]:
                     continue  # pass if visited
@@ -185,7 +185,7 @@ def Dijkstra_transpose(src_node: int, curr_graph, process_output=None):
         # loop over all his IN edges - its TRANSPOSED GRAPH!!!
         if in_edges is not None:
 
-            for edge in in_edges.values():
+            for edge in in_edges.items():
                 dest_node = edge[0]  # save as var the destination node of the edge
                 if visit_map.get(key_transform(dest_node))[dest_node]:
                     continue  # pass if visited

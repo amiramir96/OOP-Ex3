@@ -86,14 +86,14 @@ class TestDiGraph(TestCase):
         dictt = g.all_in_edges_of_node(2)
         i = 3.1
         for edge_in in dictt.values():
-            self.assertEqual(edge_in[1], i)
+            self.assertEqual(edge_in, i)
             i = i-2
         # case 2
         g.remove_edge(1, 2)
         dictt = g.all_in_edges_of_node(2)
         i = 1.1
         for edge_in in dictt.values():
-            self.assertEqual(edge_in[1], i)
+            self.assertEqual(edge_in, i)
             i = i-2
 
     def test_all_out_edges_of_node(self):
@@ -112,14 +112,14 @@ class TestDiGraph(TestCase):
         dictt = g.all_out_edges_of_node(1)
         i = 3
         for edge_in in dictt.values():
-            self.assertEqual(edge_in[1], i)
+            self.assertEqual(edge_in, i)
             i = i + 12
         # case 2
         g.remove_edge(1, 2)
         dictt = g.all_out_edges_of_node(1)
         i = 15
         for edge_in in dictt.values():
-            self.assertEqual(edge_in[1], i)
+            self.assertEqual(edge_in, i)
             i = i + 1
 
 

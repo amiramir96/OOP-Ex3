@@ -137,14 +137,14 @@ class TestGraphAlgo(TestCase):
         self.assertEqual(ans[1], float('inf'))
 
         # case 2.1
-        for i in range(1000):
+        for i in range(300):
             algo.get_graph().add_node(i)
         all_nodes = algo.get_graph().get_all_v()
         for node in all_nodes.keys():
             for i in range(20):
-                algo.get_graph().add_edge(node, randint(0, 1000), randint(1, 12))
+                algo.get_graph().add_edge(node, randint(0, 299), randint(1, 12))
         algo.centerPoint()
-        self.assertEqual(algo.get_graph().v_size(), 1000)
+        self.assertEqual(algo.get_graph().v_size(), 300)
 
         # case 2.2
         algo.get_graph().remove_node(40)
@@ -155,4 +155,3 @@ class TestGraphAlgo(TestCase):
     def test_plot_graph(self):
         g = GraphAlgo('data/A0.json')
         g.plot_graph()
-

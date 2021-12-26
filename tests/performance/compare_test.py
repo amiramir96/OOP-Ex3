@@ -9,13 +9,13 @@ def compare_test(nodes: int):
     algo = GraphAlgo()
     start = time.time()
     if nodes == 100:
-        algo.load_from_json(r'tests\performance\100performance.json')
+        algo.load_from_json(r'100performance.json')
     elif nodes == 1000:
-        algo.load_from_json(r'tests\performance\1Kperformance.json')
+        algo.load_from_json(r'1Kperformance.json')
     elif nodes == 10000:
-        algo.load_from_json(r'tests\performance\10Kperformance.json')
+        algo.load_from_json(r'10Kperformance.json')
     elif nodes == 100000:
-        algo.load_from_json(r'tests\performance\100Kperformance.json')
+        algo.load_from_json(r'100Kperformance.json')
     else:
         return -1
     curr_graph = algo.get_graph()

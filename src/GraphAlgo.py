@@ -1,4 +1,5 @@
 import multiprocessing
+import random
 import sys
 from typing import List
 import json
@@ -6,6 +7,7 @@ from src import GraphAlgoInterface, GraphInterface, DiGraph
 from src.BFS import iterative_BFS
 from src.BFS import iterative_transpose_BFS
 from src.Dijkstra import Dijkstra, longest_road, multi_process_beat_thread, Dijkstra_transpose
+from graphics.GUI import plot
 
 """
 :param node_id: index of relevant node in the graph
@@ -78,7 +80,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             self.load_from_json(args[0])
             self.mc = 0
         # received graph
-        elif len(args) > 0 and (type(args[0]) == GraphInterface.GraphInterface or type(args[0]) == DiGraph.DiGraph):
+        elif len(args) > 0 and issubclass(type(args[0]), GraphInterface.GraphInterface):
             self.graph = args[0]
             self.mc = self.graph.get_mc()
         self.is_connected = -1
@@ -140,9 +142,9 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             # replace last occurrence of src
             # see: https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
             curr_path = curr_path.rsplit('src', 1)[0]
-        if curr_path[-5:] == 'tests':
+        if curr_path[-11:] == 'correctness':
             # replace last occurrence of tests
-            curr_path = curr_path.rsplit('tests', 1)[0]
+            curr_path = curr_path.rsplit('tests\\correctness', 1)[0]
         if curr_path[-8:] == 'graphics':
             curr_path = curr_path.rsplit('graphics', 1)[0]
         if curr_path[-1:] != '\\':
@@ -153,7 +155,10 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
 
         # add nodes
         for node in data['Nodes']:
-            pos = tuple(map(float, node['pos'].split(',')))
+            if 'pos' in node.keys():
+                pos = tuple(map(float, node['pos'].split(',')))
+            else:
+                pos = (random.randint(0, 100), random.randint(0, 100), 0.0)
             curr_sec = self.graph.add_node(node['id'], pos)
             if not curr_sec:
                 success = False
@@ -181,9 +186,9 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
             # replace last occurrence of src
             # see: https://stackoverflow.com/questions/2556108/rreplace-how-to-replace-the-last-occurrence-of-an-expression-in-a-string
             curr_path = curr_path.rsplit('src', 1)[0]
-        if curr_path[-5:] == 'tests':
+        if curr_path[-11:] == 'correctness':
             # replace last occurrence of tests
-            curr_path = curr_path.rsplit('tests', 1)[0]
+            curr_path = curr_path.rsplit('tests\\correctness', 1)[0]
         if curr_path[-1:] != '\\':
             curr_path += '\\'
         path = curr_path + file_name
@@ -215,7 +220,7 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         # write as pretty print to the file
         with open(path, 'w') as file:
             file.write(json.dumps(g, sort_keys=True, indent=4))
-            print(json.dumps(g, sort_keys=True, indent=4))  # TODO delete
+            # print(json.dumps(g, sort_keys=True, indent=4))  # debug code
             return True
 
     def shortest_path(self, id1: int, id2: int) -> (float, list):
@@ -410,4 +415,4 @@ class GraphAlgo(GraphAlgoInterface.GraphAlgoInterface):
         Otherwise, they will be placed in a random but elegant manner.
         @return: None
         """
-        raise NotImplementedError
+        plot(self)

@@ -140,7 +140,7 @@ class DiGraph(GraphInterface.GraphInterface):
         """
         if pos is None:
             # if no pos input, lets rand it! <3
-            pos = (round(random.uniform(0, 50), 4), round(random.uniform(0, 50), 4))
+            pos = (round(random.uniform(0, 50), 4), round(random.uniform(0, 50), 4), 0.0)
         if node_id in self.node_map.get(key_transform(node_id)):  # always point first to the inner relevant dict
             return False
         self.node_map.get(key_transform(node_id))[node_id] = pos  # add currectly

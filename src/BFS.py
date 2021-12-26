@@ -1,5 +1,3 @@
-from src.DiGraph import DiGraph
-
 """
     fk u python
     what a horrible stack.. seriously whats ur problem to implement basic data structre?

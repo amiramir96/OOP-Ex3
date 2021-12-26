@@ -113,9 +113,6 @@ class TestGraphAlgo(TestCase):
         ans = algo.TSP([40, 5])
         self.assertEqual(None, ans[0])
 
-        # algo.load_from_json(r'data/1000Nodes.json')
-        # algo.TSP([1,2,3,7,11,23,40,444,321,932,142,333,543,122,732,777,891,612,441,888,222,221])
-
     def test_center_point(self):
         """
         cases:

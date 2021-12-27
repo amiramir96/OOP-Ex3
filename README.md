@@ -51,13 +51,13 @@ here is a table for RUNNING TIME of graphs with 100, 1000, 10000, 100K, 1M nodes
 
 for comparasion results between java and python implementation click here: https://github.com/amiramir96/OOP-Ex3/wiki <br>
 
-|**Node_size**|**Edge_size**|**construct graph**|**isConnected**   |**shortestPath**  | **shortestPathDist** |  **center**         | **tsp for 20 nodes** |
-|-------------|-------------|-------------------|------------------|------------------|----------------------|---------------------|----------------------|
-|    100      |    2000     |                   |                  |                  |                      |                     |                      |
-|   1,000     |  20,000     |                   |                  |                  |                      |                     |                      | 
-| 10,000      | 200,000     |                   |                  |                  |                      |                     |                      |
-| 100,000     | 2,000,000   |                   |                  |                  |                      |                     |                      |
-| 1,000,000   |  20,000,000 |                   |                  |                  |                      |                     |                      |
+|**Node_size**|**Edge_size**|**construct graph**|**isConnected**   |**shortestPath**  |  **center**          | **tsp for 20 nodes** |
+|-------------|-------------|-------------------|------------------|------------------|----------------------|----------------------|
+|    100      |    2000     |   18 ms           | 1 ms             | 4 ms             |  450 ms              |92 ms                 |
+|   1,000     |  20,000     |       62 ms       |     19 ms        | 62 ms            |     14 sec           |1 sec                 | 
+| 10,000      | 200,000     |      647 ms       |       178 ms     | 806 ms           |     1959 sec         |16 sec                |
+| 100,000     | 2,000,000   |        6 sec      |    2 sec         | 7 sec            |timeout(apx 200 hours)|144 sec               |
+| 1,000,000   |  20,000,000 |        78 sec     |      26 sec      | 95 sec           |timeout(apx 10 years) |1998 sec              |
 
 
 

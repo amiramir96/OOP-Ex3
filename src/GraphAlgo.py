@@ -63,8 +63,8 @@ def nearest_neighbour(pivot_node: int, neighbours: list, dist_map: dict, parents
     node_id = -1
     for x in neighbours:
         # iterate over all the neighbours and take the one with minimal distance from pivot_node
-        if min_dist > dist_map.get(x % 1000)[x % 1000] and x not in exception_nodes:
-            min_dist = dist_map.get(x % 1000)[x % 1000]
+        if min_dist > dist_map.get(x % 1000)[x] and x not in exception_nodes:
+            min_dist = dist_map.get(x % 1000)[x]
             node_id = x
     return parents_list_helper(pivot_node, node_id, dist_map, parents_map)
 

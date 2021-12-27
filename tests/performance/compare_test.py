@@ -48,7 +48,7 @@ def compare_test(nodes: int):
 
     # TSP
     if curr_graph.e_size() + curr_graph.v_size() > 250000:
-        print("TSP time:", shortest_path_time * 20 * 2)  # tsp_list input * 2 * dijkstra times
+        print("TSP time:", shortest_path_time * 21)  # (tsp_list input+1) * dijkstra times
     else:
         tsp_list = []
         i = 0

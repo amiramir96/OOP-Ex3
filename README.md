@@ -49,7 +49,7 @@ The reset button is used to reset the GUI, you you misclicked or want to check s
 <br>
 here is a table for RUNNING TIME of graphs with 100, 1000, 10000, 100K, 1M nodes (and 20 out edges for ea node in avg) <br>
 
-for comparasion results between java and python implementation click here: https://github.com/amiramir96/OOP-Ex3/wiki <br>
+for comparasion results between java and python implementation click here: https://github.com/amiramir96/OOP-Ex3/wiki/Compare-java-VS-python-projects <br>
 
 |**Node_size**|**Edge_size**|**construct graph**|**isConnected**   |**shortestPath**  |  **center**          | **tsp for 20 nodes** |
 |-------------|-------------|-------------------|------------------|------------------|----------------------|----------------------|

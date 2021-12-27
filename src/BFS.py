@@ -9,17 +9,17 @@ class myStack:
     # based on list
     def __init__(self):
         self.stack = []
-
+        
     def pop(self):
         # -1 for empty, item for exist
         if self.isEmpty():
             return -1
         else:
-            return self.stack.pop(0)
+            return self.stack.pop()
 
     # add first in the list
     def push(self, node_id: int):
-        self.stack.insert(0, node_id)
+        self.stack.append(node_id)
 
     # True for empty
     def isEmpty(self):

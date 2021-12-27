@@ -18,9 +18,9 @@ the project splits to packges: src (for graph and algorithm files), graphics, te
 | **Tests**       |   2 categories - 1) Currectness: test each of the public class methods to return currect answer, 2) RunningTime - represented in the file "perform_test.py" | 
 
 ## Tests
-The "performance_test.py" file is used to test the performaence of the algorithm on graphs with different sizes and for easy comparasion to the results from the prev assigment.  
+The "perform_test.py" file is used to test the performaence of the algorithm on graphs with different sizes and for easy comparasion to the results from the prev assigment.  
 It can be called from the cmd or be given the number of nodes for the graph.  
-`py perform_test.py`, if u would like to see the comparasion test agains the java project, input 0 in place of natural number.  
+`py perform_test.py`, if u would like to see the comparasion test agains the java project, input 0 in place of natural number BUT before, extract the ZIP file of 100Kperformance that direct at the folder tests -> performance <br>  
 Unless u input "0" for the compare test, The program will create a random graph with the specified number of nodes in the folder and test the elapsed time of multiple implemented methods on that graph.
 <br>
 for compare test please ENSURE that u downloaded the whole tests folder and extracted inside the performance folder the 100Kperforamnce.zip file (for the 100K.json graph)

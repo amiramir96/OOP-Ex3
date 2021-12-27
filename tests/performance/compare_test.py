@@ -57,6 +57,7 @@ def compare_test(nodes: int):
             if x not in tsp_list:
                 i = i + 1
                 tsp_list.append(x)
+        start = time.time()
         algo.TSP(tsp_list)
         end = time.time()
         print("TSP time:", end - start, "seconds")
